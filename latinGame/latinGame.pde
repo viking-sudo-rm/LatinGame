@@ -110,7 +110,7 @@ class Key {
 }
 
 Actor thePlayer;
-ArrayList<Object> environment;
+ArrayList<Thing> environment;
 
 Key W = new Key(-1);
 Key A = new Key(-1);
@@ -120,7 +120,7 @@ Key D = new Key(1);
 void setup() {
   size(500,400);
   thePlayer = new Actor("playerSprites");
-  environment = new ArrayList<Object>();
+  environment = new ArrayList<Thing>();
   for (int i = 0; i < 6; i++)
     environment.add(new Thing("background.jpg", 40 * i, 70 * i));
   thePlayer.velocity *= 2;
@@ -129,8 +129,8 @@ void setup() {
 void draw() {
   background(0);
   imageMode(CENTER);
-  for (Object thing : environment)
-    ((Thing) thing).render(thePlayer);
+  for (Thing thing : environment)
+    thing.render(thePlayer);
   thePlayer.render();
   
   if (A.getValue() + D.getValue() == 0) {
@@ -138,25 +138,39 @@ void draw() {
       thePlayer.moveD((Integer) ((W.getValue() + S.getValue())/abs(W.getValue() + S.getValue()) * 90));
   }
   else thePlayer.move((A.getValue() < 0 ? radians(180) : 0) + atan((W.getValue() + S.getValue()) / (A.getValue() + D.getValue())));
-  
-  println(A.getValue());
-  
+    
 }
 
 void keyPressed() {
+  switch (key) {
+    case 'w': W.press(); break;
+    case 'a': A.press(); break;
+    case 's': S.press(); break;
+    case 'd': D.press(); break;
+  }
   if (key == CODED) {
-    if (keyCode == UP) W.press();
-    if (keyCode == DOWN) S.press();
-    if (keyCode == LEFT) A.press();
-    if (keyCode == RIGHT) D.press();
+    switch (keyCode) {
+      case UP: W.press(); break;
+      case LEFT: A.press(); break;
+      case DOWN: S.press(); break;
+      case RIGHT: D.press(); break;
+    }
   }
 }
 
 void keyReleased() {
+  switch (key) {
+    case 'w': W.release(); break;
+    case 'a': A.release(); break;
+    case 's': S.release(); break;
+    case 'd': D.release(); break;
+  }
   if (key == CODED) {
-    if (keyCode == UP) W.release();
-    if (keyCode == DOWN) S.release();
-    if (keyCode == LEFT) A.release();
-    if (keyCode == RIGHT) D.release();
+    switch (keyCode) {
+      case UP: W.release(); break;
+      case LEFT: A.release(); break;
+      case DOWN: S.release(); break;
+      case RIGHT: D.release(); break;
+    }
   }
 }
