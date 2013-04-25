@@ -22,7 +22,7 @@ class Thing {
 
 class Actor extends Thing {
   
-  private static final int MOVES_PER_STEP = 3;
+  private static final int MOVES_PER_STEP = 5;
   private static final int WIDTH = 28;
   
   public int velocity;
@@ -52,6 +52,13 @@ class Actor extends Thing {
   
   public void move(float theta) {
     foot = (foot + 1) % (2 * MOVES_PER_STEP);
+    direction = theta;
+    this.x += velocity * cos(direction);
+    this.y += velocity * sin(direction);
+  }
+  
+  public void moveD(int theta) {
+    foot = (foot + 1) % (2 * MOVES_PER_STEP);
     direction = radians(theta);
     this.x += velocity * cos(direction);
     this.y += velocity * sin(direction);
@@ -78,8 +85,37 @@ class Actor extends Thing {
   
 }
 
+class Key {
+  
+  private boolean isPressed;
+  private int sign;
+  
+  public Key(int sign) {
+    this.sign = sign;
+    isPressed = false;
+  }
+  
+  public int getValue() {
+    return isPressed ? sign : 0;
+  }
+  
+  public void press() {
+    isPressed = true;
+  }
+  
+  public void release() {
+    isPressed = false;
+  }
+  
+}
+
 Actor thePlayer;
 ArrayList<Object> environment;
+
+Key W = new Key(-1);
+Key A = new Key(-1);
+Key S = new Key(1);
+Key D = new Key(1);
 
 void setup() {
   size(500,400);
@@ -96,13 +132,31 @@ void draw() {
   for (Object thing : environment)
     ((Thing) thing).render(thePlayer);
   thePlayer.render();
+  
+  if (A.getValue() + D.getValue() == 0) {
+    if (W.getValue() + S.getValue() != 0)
+      thePlayer.moveD((Integer) ((W.getValue() + S.getValue())/abs(W.getValue() + S.getValue()) * 90));
+  }
+  else thePlayer.move((A.getValue() < 0 ? radians(180) : 0) + atan((W.getValue() + S.getValue()) / (A.getValue() + D.getValue())));
+  
+  println(A.getValue());
+  
 }
 
 void keyPressed() {
-  switch (key) {
-    case 'w': thePlayer.move(-90); break;
-    case 'a': thePlayer.move(180); break;
-    case 's': thePlayer.move(90); break;
-    case 'd': thePlayer.move(0); break;
+  if (key == CODED) {
+    if (keyCode == UP) W.press();
+    if (keyCode == DOWN) S.press();
+    if (keyCode == LEFT) A.press();
+    if (keyCode == RIGHT) D.press();
+  }
+}
+
+void keyReleased() {
+  if (key == CODED) {
+    if (keyCode == UP) W.release();
+    if (keyCode == DOWN) S.release();
+    if (keyCode == LEFT) A.release();
+    if (keyCode == RIGHT) D.release();
   }
 }
