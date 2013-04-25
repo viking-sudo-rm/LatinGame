@@ -121,8 +121,9 @@ void setup() {
   size(500,400);
   thePlayer = new Actor("playerSprites");
   environment = new ArrayList<Thing>();
-  for (int i = 0; i < 6; i++)
-    environment.add(new Thing("background.jpg", 40 * i, 70 * i));
+  for (int x = 0; x < 6; x++)
+    for (int y = 0; y < 6; y++)
+    environment.add(new Thing("background.jpg", 250 * x, 250 * y));
   thePlayer.velocity *= 2;
 }
 
