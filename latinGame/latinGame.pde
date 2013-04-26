@@ -111,6 +111,7 @@ class Key {
 
 Actor thePlayer;
 ArrayList<Thing> environment;
+ArrayList<Actor> units;
 
 Key W = new Key(-1);
 Key A = new Key(-1);
@@ -120,19 +121,28 @@ Key D = new Key(1);
 void setup() {
   size(500,400);
   thePlayer = new Actor("playerSprites");
+  thePlayer.velocity *= 2;
+  
+  units = new ArrayList<Actor>();
+  units.add(new Actor("playerSprites", 30, 30));
+  
   environment = new ArrayList<Thing>();
   for (int x = 0; x < 6; x++)
     for (int y = 0; y < 6; y++)
     environment.add(new Thing("background.jpg", 250 * x, 250 * y));
-  thePlayer.velocity *= 2;
 }
 
 void draw() {
   background(0);
   imageMode(CENTER);
+  
   for (Thing thing : environment)
     thing.render(thePlayer);
+    
   thePlayer.render();
+  
+  for (Actor unit : units)
+    unit.render(thePlayer);
   
   if (A.getValue() + D.getValue() == 0) {
     if (W.getValue() + S.getValue() != 0)
