@@ -23,26 +23,23 @@ class Thing {
 class Actor extends Thing {
   
   private static final int MOVES_PER_STEP = 5;
-  private static final int WIDTH = 28;
+  private static final int HEIGHT = 36;
   
   public int velocity;
   private float direction;
   
   private int foot;
-  
-  private int reversed;
-  
+    
   private ArrayList<PImage> sprites = new ArrayList<PImage>();
     
   public Actor(String URL, int x, int y) {
     super(x, y);
-    direction = 0;
+    direction = 90;
     velocity = 2;
     foot = 0;
-    reversed = 1;
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 8; i++) {
       sprites.add(loadImage(URL + "/" + i + ".png"));
-      ((PImage) sprites.get(i)).resize(WIDTH,0);
+      ((PImage) sprites.get(i)).resize(0,36);
     }
   }
   
@@ -69,18 +66,19 @@ class Actor extends Thing {
   }
   
   private PImage getSprite() {
-    int i = (abs(sin(direction)) > abs(cos(direction))) ? 2 * ceil(0.9 * sin(direction)) + getFoot() : 4 + getFoot();
-    scale((i > 3 ? -cos(direction) / abs(cos(direction)) : 1), 1);
-    reversed = (abs(sin(direction)) > abs(cos(direction))) ? 1 : (int) -(cos(direction) / abs(cos(direction)));
+    int i = (abs(sin(direction)) > abs(cos(direction))) ? 2 * ceil(0.9 * sin(direction)) + getFoot() : 4 + 2 * ceil(0.9 * cos(direction)) + getFoot();
     return (PImage) sprites.get(i);
   }
   
   public void render(Actor player) {
-    image(getSprite(), reversed * (x - player.x), y - player.y);
+    scale(-1,1);
+    PImage sprite = getSprite();
+    image(sprite,player.x - x, y - player.y);
   }
   
   public void render() {
-    image(getSprite(), reversed * width / 2, height / 2);
+    PImage sprite = getSprite();
+    image(sprite, width / 2, height / 2);
   }
   
 }
@@ -124,7 +122,7 @@ void setup() {
   thePlayer.velocity *= 2;
   
   units = new ArrayList<Actor>();
-  units.add(new Actor("playerSprites", 30, 30));
+  units.add(new Actor("furySprites", 30, 30));
   
   environment = new ArrayList<Thing>();
   for (int x = 0; x < 6; x++)
