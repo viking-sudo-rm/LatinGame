@@ -9,9 +9,13 @@ class Thing {
   }
   
   public Thing(String URL, int x, int y) {
+    this(x, y);
     img = loadImage(URL);
-    this.x = x;
-    this.y = y;
+  }
+  
+  public Thing(String URL, int x, int y, int height) {
+    this(URL, x, y);
+    img.resize(0,height);
   }
   
   public void render(Actor player) {
@@ -108,8 +112,11 @@ class Key {
 }
 
 Actor thePlayer;
+
 ArrayList<Thing> environment;
 ArrayList<Actor> units;
+
+int[][] grid;
 
 Key W = new Key(-1);
 Key A = new Key(-1);
@@ -121,13 +128,15 @@ void setup() {
   thePlayer = new Actor("playerSprites");
   thePlayer.velocity *= 2;
   
+  grid = new int[50][50];
+  
   units = new ArrayList<Actor>();
   units.add(new Actor("furySprites", 30, 30));
   
   environment = new ArrayList<Thing>();
   for (int x = 0; x < 6; x++)
     for (int y = 0; y < 6; y++)
-    environment.add(new Thing("background.jpg", 250 * x, 250 * y));
+    environment.add(new Thing("background.jpg", 375 * x, 275 * y, 375));
 }
 
 void draw() {
