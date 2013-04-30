@@ -1,7 +1,7 @@
 class Thing {
   
   protected int x, y;
-  private PImage img;
+  protected PImage img;
   
   public Thing(int x, int y) {
     this.x = x;
@@ -20,6 +20,16 @@ class Thing {
   
   public void render(Actor player) {
     image(img, x - player.x, y - player.y);
+  }
+  
+}
+
+class Tile extends Thing {
+  
+  private static final int WIDTH = 30;
+  
+  public Tile(String URL, int x, int y) {
+    super(URL, WIDTH * x, WIDTH * y);
   }
   
 }
@@ -116,7 +126,7 @@ Actor thePlayer;
 ArrayList<Thing> environment;
 ArrayList<Actor> units;
 
-int[][] grid;
+Tile[][] grid;
 
 Key W = new Key(-1);
 Key A = new Key(-1);
@@ -128,7 +138,7 @@ void setup() {
   thePlayer = new Actor("playerSprites");
   thePlayer.velocity *= 2;
   
-  grid = new int[50][50];
+  grid = new Tile[50][50];
   
   units = new ArrayList<Actor>();
   units.add(new Actor("furySprites", 30, 30));
