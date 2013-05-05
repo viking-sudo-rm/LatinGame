@@ -19,7 +19,7 @@ class Thing {
   }
   
   public void render(Actor player) {
-    image(img, x - player.x, y - player.y);
+    image(img, x - player.x + width / 2, y - player.y + height / 2);
   }
   
 }
@@ -27,7 +27,7 @@ class Thing {
 class Tile extends Thing {
   
   private static final int WIDTH = 30;
-  
+    
   public Tile(String URL, int x, int y) {
     super(URL, WIDTH * x, WIDTH * y);
   }
@@ -121,6 +121,21 @@ class Key {
   
 }
 
+void loadGrid(String URL) {
+    grid = new Tile[50][50];
+    String[] lines = loadStrings(URL);
+    for (int y = 0; y < lines.length; y++) {
+      for (int x = 0; x < lines[y].length(); x++) {
+        if (symbols.get(lines[y].charAt(x)) != null)
+          grid[y][x] = new Tile(symbols.get(lines[y].charAt(x)), x, y);
+      }
+    }
+}
+
+boolean isFree(int x, int y) {
+  return grid[y / Tile.WIDTH][x / Tile.WIDTH] == null;
+}
+
 Actor thePlayer;
 
 ArrayList<Thing> environment;
@@ -128,25 +143,31 @@ ArrayList<Actor> units;
 
 Tile[][] grid;
 
+Map<Character, String> symbols = new HashMap<Character, String>();
+
 Key W = new Key(-1);
 Key A = new Key(-1);
 Key S = new Key(1);
 Key D = new Key(1);
 
 void setup() {
+  
   size(500,400);
+  
+  symbols.put('a',"background.jpg");
+  loadGrid("grid.txt");
+    
   thePlayer = new Actor("playerSprites");
   thePlayer.velocity *= 2;
-  
-  grid = new Tile[50][50];
-  
+   
   units = new ArrayList<Actor>();
   units.add(new Actor("furySprites", 30, 30));
   
   environment = new ArrayList<Thing>();
-  for (int x = 0; x < 6; x++)
+  for (int x = 0; x < 6; x++) {
     for (int y = 0; y < 6; y++)
-    environment.add(new Thing("background.jpg", 375 * x, 275 * y, 375));
+      environment.add(new Thing("background.jpg", 375 * x, 275 * y, 375));
+  }
 }
 
 void draw() {
@@ -155,6 +176,14 @@ void draw() {
   
   for (Thing thing : environment)
     thing.render(thePlayer);
+  
+  for (int y = 0; y < grid.length; y++) {
+    for (int x = 0; x < grid[0].length; x++) {
+      if (grid[y][x] != null) {
+        grid[y][x].render(thePlayer);
+      }
+    }
+  }
     
   thePlayer.render();
   
