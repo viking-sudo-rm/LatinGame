@@ -17,6 +17,10 @@ class Thing {
     this(URL, x, y);
     img.resize(0,height);
   }
+  //getter methods...just in case, ya know...
+
+  public int xPos() {return this.x;}
+  public int yPos() {return this.y;}
   
   public void render(Actor player) {
     image(img, x - player.x, y - player.y);
@@ -51,14 +55,14 @@ class Actor extends Thing {
      this(URL,0,0);
   }
   
-  public void move(float theta) {
+  public void move(float theta) { //moves in radians
     foot = (foot + 1) % (2 * MOVES_PER_STEP);
     direction = theta;
     this.x += velocity * cos(direction);
     this.y += velocity * sin(direction);
   }
   
-  public void moveD(int theta) {
+  public void moveD(int theta) { //same thing as move, just in degrees
     foot = (foot + 1) % (2 * MOVES_PER_STEP);
     direction = radians(theta);
     this.x += velocity * cos(direction);
@@ -77,16 +81,35 @@ class Actor extends Thing {
   public void render(Actor player) {
     scale(-1,1);
     PImage sprite = getSprite();
-    image(sprite,player.x - x, y - player.y);
+    image(sprite,player.x - x - width / 2, y - player.y + height / 2);
   }
   
   public void render() {
     PImage sprite = getSprite();
     image(sprite, width / 2, height / 2);
   }
+  ///////////////////////// JASEN \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  public double distanceTo(Thing target) {
+    return sqrt((float)(Math.pow(target.x-this.x,2)+ Math.pow(target.y-this.y,2)));
+  }
   
+  //everything is by default in radians
+  public double getAngleBetween(Thing target){
+    if(target.x <= this.x && target.y < this.y){
+      return -Math.PI/2-acos((float)(abs(target.x-this.x)/distanceTo(target)));
+    }
+    if(target.x >= this.x && target.y > this.y){
+      return acos((float)(abs(target.x-this.x)/distanceTo(target)));
+    }
+    if(target.x >= this.x && target.y <= this.y){
+      return -1*acos((float)(abs(target.x-this.x)/distanceTo(target)));
+    }
+    if(target.x <= this.x && target.y > this.y){
+      return Math.PI/2+acos((float)(abs(target.x-this.x)/distanceTo(target)));
+    }
+    else return Math.PI;
+  }
 }
-
 class Key {
   
   private boolean isPressed;
@@ -110,7 +133,7 @@ class Key {
   }
   
 }
-
+///////////////////// MAIN CLASS STUFF STARTS HERE \\\\\\\\\\\\\\\\\\\\\\\\\\
 Actor thePlayer;
 
 ArrayList<Thing> environment;
@@ -148,15 +171,23 @@ void draw() {
     
   thePlayer.render();
   
-  for (Actor unit : units)
+  for (Actor unit : units){
+    System.out.println("Unit Coords: "+unit.x+" "+unit.y);
+    System.out.println("Player Coords: "+thePlayer.x+" "+thePlayer.y);
+    //System.out.println(unit.getAngleBetween(thePlayer));
+    unit.move((float)(unit.getAngleBetween(thePlayer)));
+    //unit.move(0);
     unit.render(thePlayer);
-  
+    //System.out.println(unit.distanceTo(thePlayer));
+  }
   if (A.getValue() + D.getValue() == 0) {
     if (W.getValue() + S.getValue() != 0)
       thePlayer.moveD((Integer) ((W.getValue() + S.getValue())/abs(W.getValue() + S.getValue()) * 90));
   }
   else thePlayer.move((A.getValue() < 0 ? radians(180) : 0) + atan((W.getValue() + S.getValue()) / (A.getValue() + D.getValue())));
-    
+  
+  //System.out.println("Mouse Coords: " + mouseX + " " + mouseY); 
+  
 }
 
 void keyPressed() {
