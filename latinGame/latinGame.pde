@@ -30,6 +30,7 @@ class Tile extends Thing {
     
   public Tile(String URL, int x, int y) {
     super(URL, WIDTH * x, WIDTH * y);
+    img.resize(0, WIDTH);
   }
   
 }
@@ -61,18 +62,17 @@ class Actor extends Thing {
      this(URL,0,0);
   }
   
-  public void move(float theta) {
+  public void move(float theta) {    
     foot = (foot + 1) % (2 * MOVES_PER_STEP);
     direction = theta;
-    this.x += velocity * cos(direction);
-    this.y += velocity * sin(direction);
+    if (isFree((int) (x + velocity * cos(direction)),(int) (y + velocity * sin(direction)))) {
+      this.x += velocity * cos(direction);
+      this.y += velocity * sin(direction);
+    }
   }
   
   public void moveD(int theta) {
-    foot = (foot + 1) % (2 * MOVES_PER_STEP);
-    direction = radians(theta);
-    this.x += velocity * cos(direction);
-    this.y += velocity * sin(direction);
+    move(radians(theta));
   }
   
   private int getFoot() {
@@ -92,7 +92,7 @@ class Actor extends Thing {
   
   public void render() {
     PImage sprite = getSprite();
-    image(sprite, width / 2, height / 2);
+    image(sprite, width / 2, height / 2 - sprite.height);
   }
   
 }
@@ -133,7 +133,11 @@ void loadGrid(String URL) {
 }
 
 boolean isFree(int x, int y) {
-  return grid[y / Tile.WIDTH][x / Tile.WIDTH] == null;
+  x /= Tile.WIDTH;
+  y /= Tile.WIDTH;
+  if (y < 0 || y >= grid.length || x < 0 || x >= grid[0].length)
+    return false;
+  return grid[y][x] == null;
 }
 
 Actor thePlayer;
@@ -154,7 +158,7 @@ void setup() {
   
   size(500,400);
   
-  symbols.put('a',"background.jpg");
+  symbols.put('a',"wall.png");
   loadGrid("grid.txt");
     
   thePlayer = new Actor("playerSprites");
