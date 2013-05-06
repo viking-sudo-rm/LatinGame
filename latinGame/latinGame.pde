@@ -5,7 +5,7 @@ class Thing {
   
   public Thing(int x, int y) {
     this.x = x;
-    this.y = y;
+    thsis.y = y;
   }
   
   public Thing(String URL, int x, int y) {
@@ -18,6 +18,7 @@ class Thing {
     img.resize(0,height);
   }
   //getter methods...just in case, ya know...
+  //JASEN U FUCKING OOP GOODY 2SHOES OMFG LEAVE
 
   public int xPos() {return this.x;}
   public int yPos() {return this.y;}
@@ -73,6 +74,9 @@ class Actor extends Thing {
     if (isFree((int) (x + velocity * cos(direction)),(int) (y + velocity * sin(direction))) && isFree((int) (x + sprite.width + velocity * cos(direction)),(int) (y + velocity * sin(direction))) && isFree((int) (x + velocity * cos(direction)),(int) (y + sprite.height + velocity * sin(direction))) && isFree((int) (x + sprite.width + velocity * cos(direction)),(int) (y + sprite.height + velocity * sin(direction)))) {
       this.x += velocity * cos(direction);
       this.y += velocity * sin(direction);
+    }
+    else if (abs(theta) < 450) {
+      move(theta + (float) Math.PI / 2);
     }
   }
   
@@ -197,6 +201,7 @@ void setup() {
     for (int y = 0; y < 6; y++)
       environment.add(new Thing("background.jpg", 375 * x, 275 * y, 375));
   }
+  environment.add(new Thing("harpy.png", 40, 40, 36));
 }
 
 void draw() {
