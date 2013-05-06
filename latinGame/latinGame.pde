@@ -65,7 +65,8 @@ class Actor extends Thing {
   public void move(float theta) {    
     foot = (foot + 1) % (2 * MOVES_PER_STEP);
     direction = theta;
-    if (isFree((int) (x + velocity * cos(direction)),(int) (y + velocity * sin(direction)))) {
+    PImage sprite = getSprite();
+    if (isFree((int) (x + velocity * cos(direction)),(int) (y + velocity * sin(direction))) && isFree((int) (x + sprite.width + velocity * cos(direction)),(int) (y + velocity * sin(direction))) && isFree((int) (x + velocity * cos(direction)),(int) (y + sprite.height + velocity * sin(direction))) && isFree((int) (x + sprite.width + velocity * cos(direction)),(int) (y + sprite.height + velocity * sin(direction)))) {
       this.x += velocity * cos(direction);
       this.y += velocity * sin(direction);
     }
@@ -92,7 +93,7 @@ class Actor extends Thing {
   
   public void render() {
     PImage sprite = getSprite();
-    image(sprite, width / 2, height / 2 - sprite.height);
+    image(sprite, width / 2, height / 2);
   }
   
 }
