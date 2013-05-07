@@ -1,3 +1,9 @@
+interface Movable {
+  
+  public void move(float theta);
+  
+}
+
 class Thing {
   
   protected int x, y;
@@ -5,7 +11,7 @@ class Thing {
   
   public Thing(int x, int y) {
     this.x = x;
-    thsis.y = y;
+    this.y = y;
   }
   
   public Thing(String URL, int x, int y) {
@@ -31,7 +37,7 @@ class Thing {
 
 class Tile extends Thing {
   
-  private static final int WIDTH = 30;
+  private static final int WIDTH = 36;
     
   public Tile(String URL, int x, int y) {
     super(URL, WIDTH * x, WIDTH * y);
@@ -40,7 +46,7 @@ class Tile extends Thing {
   
 }
 
-class Actor extends Thing {
+class Actor extends Thing implements Movable {
   
   private static final int MOVES_PER_STEP = 5;
   private static final int HEIGHT = 36;
@@ -59,12 +65,12 @@ class Actor extends Thing {
     foot = 0;
     for (int i = 0; i < 8; i++) {
       sprites.add(loadImage(URL + "/" + i + ".png"));
-      ((PImage) sprites.get(i)).resize(0,36);
+      sprites.get(i).resize(0,36);
     }
   }
   
   public Actor(String URL) {
-     this(URL,0,0);
+     this(URL,50,50);
   }
   
   public void move(float theta) {    
@@ -76,6 +82,7 @@ class Actor extends Thing {
       this.y += velocity * sin(direction);
     }
     else if (abs(theta) < 450) {
+      //move((float) Math.PI - theta);
       move(theta + (float) Math.PI / 2);
     }
   }
@@ -94,21 +101,19 @@ class Actor extends Thing {
   }
   
   public void render(Actor player) {
-    scale(-1,1);
     PImage sprite = getSprite();
-    image(sprite,player.x - x - width / 2, y - player.y + height / 2);
+    image(sprite, x - player.x + width / 2, y - player.y + height / 2);
   }
   
   public void render() {
     PImage sprite = getSprite();
     image(sprite, width / 2, height / 2);
   }
-  ///////////////////////// JASEN \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
   public double distanceTo(Thing target) {
     return sqrt((float)(Math.pow(target.x-this.x,2)+ Math.pow(target.y-this.y,2)));
   }
   
-  //everything is by default in radians
   public double getAngleBetween(Thing target){
     if(target.x <= this.x && target.y < this.y){
       return -Math.PI/2-acos((float)(abs(target.x-this.x)/distanceTo(target)));
@@ -125,6 +130,19 @@ class Actor extends Thing {
     else return Math.PI;
   }
 }
+
+class Trident extends Thing implements Movable {
+  
+  public Trident(String URL, int x, int y) {
+    super(URL, x, y);
+  }
+  
+  public void move(float theta) {
+    
+  }
+  
+}
+
 class Key {
   
   private boolean isPressed;
@@ -151,7 +169,7 @@ class Key {
 ///////////////////// MAIN CLASS STUFF STARTS HERE \\\\\\\\\\\\\\\\\\\\\\\\\\
 
 void loadGrid(String URL) {
-    grid = new Tile[50][50];
+    grid = new Tile[50][400];
     String[] lines = loadStrings(URL);
     for (int y = 0; y < lines.length; y++) {
       for (int x = 0; x < lines[y].length(); x++) {
@@ -194,11 +212,11 @@ void setup() {
   thePlayer.velocity *= 2;
    
   units = new ArrayList<Actor>();
-  units.add(new Actor("furySprites", 30, 30));
+  units.add(new Actor("furySprites", 100, 400));
   
   environment = new ArrayList<Thing>();
-  for (int x = 0; x < 6; x++) {
-    for (int y = 0; y < 6; y++)
+  for (int x = -1; x < 30; x++) {
+    for (int y = 0; y < 7; y++)
       environment.add(new Thing("background.jpg", 375 * x, 275 * y, 375));
   }
   environment.add(new Thing("harpy.png", 40, 40, 36));
@@ -222,21 +240,15 @@ void draw() {
   thePlayer.render();
   
   for (Actor unit : units){
-    System.out.println("Unit Coords: "+unit.x+" "+unit.y);
-    System.out.println("Player Coords: "+thePlayer.x+" "+thePlayer.y);
-    //System.out.println(unit.getAngleBetween(thePlayer));
     unit.move((float)(unit.getAngleBetween(thePlayer)));
-    //unit.move(0);
     unit.render(thePlayer);
-    //System.out.println(unit.distanceTo(thePlayer));
   }
+  
   if (A.getValue() + D.getValue() == 0) {
     if (W.getValue() + S.getValue() != 0)
       thePlayer.moveD((Integer) ((W.getValue() + S.getValue())/abs(W.getValue() + S.getValue()) * 90));
   }
   else thePlayer.move((A.getValue() < 0 ? radians(180) : 0) + atan((W.getValue() + S.getValue()) / (A.getValue() + D.getValue())));
-  
-  //System.out.println("Mouse Coords: " + mouseX + " " + mouseY); 
   
 }
 
