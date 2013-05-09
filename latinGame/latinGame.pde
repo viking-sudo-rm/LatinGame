@@ -25,6 +25,7 @@ class Thing {
   }
   //getter methods...just in case, ya know...
   //JASEN U FUCKING OOP GOODY 2SHOES OMFG LEAVE
+  //i actually used it lol
 
   public int xPos() {return this.x;}
   public int yPos() {return this.y;}
@@ -52,6 +53,8 @@ class Actor extends Thing implements Movable {
   private static final int HEIGHT = 36;
   
   public int velocity;
+  public boolean canFly;
+  
   private float direction;
   
   private int foot;
@@ -63,28 +66,25 @@ class Actor extends Thing implements Movable {
     direction = 90;
     velocity = 2;
     foot = 0;
+    canFly = false;
     for (int i = 0; i < 8; i++) {
       sprites.add(loadImage(URL + "/" + i + ".png"));
       sprites.get(i).resize(0,36);
     }
   }
   
-  public Actor(String URL) {
-     this(URL,50,50);
-  }
-  
   public void move(float theta) {    
     foot = (foot + 1) % (2 * MOVES_PER_STEP);
     direction = theta;
     PImage sprite = getSprite();
-    if (isFree((int) (x + velocity * cos(direction)),(int) (y + velocity * sin(direction))) && isFree((int) (x + sprite.width + velocity * cos(direction)),(int) (y + velocity * sin(direction))) && isFree((int) (x + velocity * cos(direction)),(int) (y + sprite.height + velocity * sin(direction))) && isFree((int) (x + sprite.width + velocity * cos(direction)),(int) (y + sprite.height + velocity * sin(direction)))) {
+    if (canFly || (isFree((int) (x + velocity * cos(direction)),(int) (y + velocity * sin(direction))) && isFree((int) (x + sprite.width + velocity * cos(direction)),(int) (y + velocity * sin(direction))) && isFree((int) (x + velocity * cos(direction)),(int) (y + sprite.height + velocity * sin(direction))) && isFree((int) (x + sprite.width + velocity * cos(direction)),(int) (y + sprite.height + velocity * sin(direction))))) {
       this.x += velocity * cos(direction);
       this.y += velocity * sin(direction);
     }
-    else if (abs(theta) < 450) {
-      //move((float) Math.PI - theta);
-      move(theta + (float) Math.PI / 2);
-    }
+    //else if (abs(theta) < 450) {
+      //int sign = (theta % (Math.PI / 2) < Math.PI / 4) ? -1 : 1;
+      //move(theta + sign * (float) Math.PI / 2);
+    //}
   }
   
   public void moveD(int theta) {
@@ -115,30 +115,72 @@ class Actor extends Thing implements Movable {
   }
   
   public double getAngleBetween(Thing target){
-    if(target.x <= this.x && target.y < this.y){
-      return -Math.PI/2-acos((float)(abs(target.x-this.x)/distanceTo(target)));
+    if(target.x <= this.x && target.y <= this.y){
+      return -PI + acos((float)(abs(target.x-this.x)/distanceTo(target)));
     }
-    if(target.x >= this.x && target.y > this.y){
+    if(target.x > this.x && target.y > this.y){
       return acos((float)(abs(target.x-this.x)/distanceTo(target)));
     }
-    if(target.x >= this.x && target.y <= this.y){
+    if(target.x > this.x && target.y <= this.y){
       return -1*acos((float)(abs(target.x-this.x)/distanceTo(target)));
     }
     if(target.x <= this.x && target.y > this.y){
-      return Math.PI/2+acos((float)(abs(target.x-this.x)/distanceTo(target)));
+      return PI - acos((float)(abs(target.x-this.x)/distanceTo(target)));
     }
     else return Math.PI;
   }
+
 }
 
-class Trident extends Thing implements Movable {
+class Human extends Actor {
   
-  public Trident(String URL, int x, int y) {
-    super(URL, x, y);
+  private int ammo;
+  
+  public Human(String URL) {
+     this(URL,50,50);
   }
   
-  public void move(float theta) {
+  public Human(String URL, int x, int y) {
+    super(URL, x, y);
+    ammo = 1000;
+  }
+  
+  public Trident attack(Thing target, ArrayList<Actor> targets) {    
+    if (ammo < 1)
+      return null;      
+    ammo--;
+    return new Trident("trident.png", x, y, (float) getAngleBetween(target), targets);
+  }
+  
+}
+
+class Trident extends Thing {
+  
+  private float theta;
+  private ArrayList<Actor> targets;
+  private int numUpdates;
+  
+  private static final int VELOCITY = 8;
+  
+  public Trident(String URL, int x, int y, float theta, ArrayList<Actor> targets) {
+    super(URL, x, y);
+    this.theta = theta;
+    this.targets = targets;
+    numUpdates = 0;
     
+  }
+  
+  protected void update() {
+    numUpdates++;
+  }
+  
+  public void render(Actor player) {
+    update();
+    translate(x - player.x + width / 2, y - player.y + height / 2);
+    rotate(theta);
+    image(img, numUpdates * VELOCITY, 0);
+    rotate(-theta);
+    translate(-x + player.x - width / 2, -y + player.y - height / 2);
   }
   
 }
@@ -187,7 +229,7 @@ boolean isFree(int x, int y) {
   return grid[y][x] == null;
 }
 
-Actor thePlayer;
+Human thePlayer;
 
 ArrayList<Thing> environment;
 ArrayList<Actor> units;
@@ -208,18 +250,18 @@ void setup() {
   symbols.put('a',"wall.png");
   loadGrid("grid.txt");
     
-  thePlayer = new Actor("playerSprites");
+  thePlayer = new Human("playerSprites");
   thePlayer.velocity *= 2;
    
   units = new ArrayList<Actor>();
   units.add(new Actor("furySprites", 100, 400));
+  units.get(0).canFly = true;
   
   environment = new ArrayList<Thing>();
   for (int x = -1; x < 30; x++) {
     for (int y = 0; y < 7; y++)
       environment.add(new Thing("background.jpg", 375 * x, 275 * y, 375));
   }
-  environment.add(new Thing("harpy.png", 40, 40, 36));
 }
 
 void draw() {
@@ -250,6 +292,11 @@ void draw() {
   }
   else thePlayer.move((A.getValue() < 0 ? radians(180) : 0) + atan((W.getValue() + S.getValue()) / (A.getValue() + D.getValue())));
   
+}
+
+void mousePressed() {
+  Trident t = thePlayer.attack(new Thing(mouseX + thePlayer.xPos() - width / 2, mouseY + thePlayer.yPos() - height / 2), units);
+  if (t != null) environment.add(t);
 }
 
 void keyPressed() {
