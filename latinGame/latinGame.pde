@@ -9,9 +9,14 @@ class Thing {
   protected int x, y;
   protected PImage img;
   
+  public boolean isDead;
+
+  
   public Thing(int x, int y) {
     this.x = x;
     this.y = y;
+    isDead = false;
+
   }
   
   public Thing(String URL, int x, int y) {
@@ -23,6 +28,11 @@ class Thing {
     this(URL, x, y);
     img.resize(0,height);
   }
+  
+  public void kill() {
+    isDead = true;
+  }
+  
   //getter methods...just in case, ya know...
   //JASEN U FUCKING OOP GOODY 2SHOES OMFG LEAVE
   //i actually used it lol
@@ -109,6 +119,11 @@ class Actor extends Thing implements Movable {
     PImage sprite = getSprite();
     image(sprite, width / 2, height / 2);
   }
+  
+  public boolean overlaps(double otherX, double otherY) {
+    PImage sprite = getSprite();
+    return otherX >= x && otherX <= x + sprite.width / 2 && otherY >= y && otherY <= y + sprite.height / 2;
+  }
 
   public double distanceTo(Thing target) {
     return sqrt((float)(Math.pow(target.x-this.x,2)+ Math.pow(target.y-this.y,2)));
@@ -142,14 +157,18 @@ class Human extends Actor {
   
   public Human(String URL, int x, int y) {
     super(URL, x, y);
-    ammo = 1000;
+    ammo = 2;
+  }
+  
+  public void giveTrident() {
+    ammo++;
   }
   
   public Trident attack(Thing target, ArrayList<Actor> targets) {    
     if (ammo < 1)
       return null;      
     ammo--;
-    return new Trident("trident.png", x, y, (float) getAngleBetween(target), targets);
+    return new Trident("trident.png", x, y, (float) getAngleBetween(target), distanceTo(target), targets, thePlayer);
   }
   
 }
@@ -157,21 +176,35 @@ class Human extends Actor {
 class Trident extends Thing {
   
   private float theta;
+  private double distance;
   private ArrayList<Actor> targets;
+  private Human thrower;
   private int numUpdates;
   
   private static final int VELOCITY = 8;
   
-  public Trident(String URL, int x, int y, float theta, ArrayList<Actor> targets) {
+  public Trident(String URL, int x, int y, float theta, double distance, ArrayList<Actor> targets, Human thrower) {
     super(URL, x, y);
     this.theta = theta;
+    this.distance = distance;
     this.targets = targets;
+    this.thrower = thrower;
     numUpdates = 0;
     
   }
   
   protected void update() {
-    numUpdates++;
+    if (numUpdates * VELOCITY < distance) {
+      numUpdates++;
+      for (int i = 0; i < targets.size(); i++) {
+        if (targets.get(i).overlaps(x + (numUpdates * VELOCITY + img.width / 2) * cos(theta), y + (numUpdates * VELOCITY) * sin(theta)))
+          targets.get(i).kill();
+      }
+    }
+    else if (thrower.overlaps(x + (numUpdates * VELOCITY + img.width / 2) * cos(theta), y + (numUpdates * VELOCITY) * sin(theta)) || thrower.overlaps(x + (numUpdates * VELOCITY - img.width / 2) * cos(theta), y + (numUpdates * VELOCITY) * sin(theta))) {
+      thrower.giveTrident();
+      isDead = true;
+    }
   }
   
   public void render(Actor player) {
@@ -232,7 +265,8 @@ boolean isFree(int x, int y) {
 Human thePlayer;
 
 ArrayList<Thing> environment;
-ArrayList<Actor> units;
+ArrayList<Actor> units; //make an array
+ArrayList<Trident> weapons;
 
 Tile[][] grid;
 
@@ -254,14 +288,18 @@ void setup() {
   thePlayer.velocity *= 2;
    
   units = new ArrayList<Actor>();
-  units.add(new Actor("furySprites", 100, 400));
-  units.get(0).canFly = true;
+  for (int i = 0; i < 10; i++) {
+    units.add(new Actor("furySprites", 100 + 100 * i, 400));
+    units.get(i).canFly = true;
+  }
   
   environment = new ArrayList<Thing>();
   for (int x = -1; x < 30; x++) {
     for (int y = 0; y < 7; y++)
       environment.add(new Thing("background.jpg", 375 * x, 275 * y, 375));
   }
+  
+  weapons = new ArrayList<Trident>();
 }
 
 void draw() {
@@ -281,9 +319,23 @@ void draw() {
     
   thePlayer.render();
   
-  for (Actor unit : units){
+  for (int i = 0; i < weapons.size(); i++) {
+    weapons.get(i).render(thePlayer);
+    if (weapons.get(i).isDead) {
+      weapons.remove(i);
+      i--;
+    }
+  }
+  
+  Actor unit;
+  for (int i = 0; i < units.size(); i++) {
+    unit = units.get(i);
     unit.move((float)(unit.getAngleBetween(thePlayer)));
     unit.render(thePlayer);
+    if (unit.isDead) {
+      units.remove(i);
+      i--;
+    }
   }
   
   if (A.getValue() + D.getValue() == 0) {
@@ -294,9 +346,11 @@ void draw() {
   
 }
 
+Trident t;
+
 void mousePressed() {
-  Trident t = thePlayer.attack(new Thing(mouseX + thePlayer.xPos() - width / 2, mouseY + thePlayer.yPos() - height / 2), units);
-  if (t != null) environment.add(t);
+  t = thePlayer.attack(new Thing(mouseX + thePlayer.xPos() - width / 2, mouseY + thePlayer.yPos() - height / 2), units);
+  if (t != null) weapons.add(t);
 }
 
 void keyPressed() {
