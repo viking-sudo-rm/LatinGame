@@ -294,13 +294,14 @@ void setup() {
   
   symbols.put('a',"wall.png");
   symbols.put('w',"water.png");
-  symbols.put('b',"bush.png");
+  symbols.put('b',"grass.png");
   symbols.put('t',"tree.png");
   symbols.put('l',"dirtTextures/l.png");
   symbols.put('r',"dirtTextures/r.png");
   symbols.put('u',"dirtTextures/u.png");
   symbols.put('d',"dirtTextures/d.png");
   symbols.put('x',"blank.png");
+  symbols.put('p',"road/road1.png");
   loadGrid("grid.txt");
     
   thePlayer = new Human("playerSprites");
