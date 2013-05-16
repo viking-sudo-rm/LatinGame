@@ -4,6 +4,38 @@ interface Movable {
   
 }
 
+class DialogueBox{
+  public String speaker,dialogue;
+  public PImage portrait;
+  private PImage gradientBackground;
+  private PFont font;
+  
+  public DialogueBox(String speaking, String speakerPicURL, String wordsSaid){
+    speaker = speaking;
+    dialogue = wordsSaid;
+    portrait = loadImage(speakerPicURL);
+    //image(portrait,0, 0);
+    portrait.resize(0, 50);
+    gradientBackground = loadImage("Gradient2.png");
+    gradientBackground.resize(600,100);
+    //portrait.resize(width,height);
+    //font = loadFont("CENTURY.TTF");
+}
+  
+  public void drawDialogue(){
+    //translate(width/2,0);
+    //fill(0,0,255);
+    //rect(0,0,width,height);
+    //rect(0,0,width,height/6,15);
+    image(gradientBackground,width/2,height/16+5);
+    fill(0);
+    //textFont(font);
+    text(speaker + ": \n" + dialogue,width/16*4+20,height/24);
+    image(portrait,width/8,height/12);
+
+  }
+}
+
 class Thing {
   
   protected int x, y;
@@ -278,6 +310,7 @@ ArrayList<Thing> environment;
 ArrayList<Thing> backgrounds;
 ArrayList<Actor> units; //make an array
 ArrayList<Trident> weapons;
+ArrayList<DialogueBox> dialogues = new ArrayList<DialogueBox>();
 
 Tile[][] grid;
 
@@ -289,7 +322,8 @@ Key S = new Key(1);
 Key D = new Key(1);
 
 void setup() {
-  
+  dialogues.add(new DialogueBox("Jerome","harpy.png","Yo, I am so ghetto! I been to prison like 8 times in the past week!"));
+  dialogues.add(new DialogueBox("Matthew Hull","trident.png","I'm so ratched it's scary!"));
   size(500,400);
   
   symbols.put('a',"wall.png");
@@ -372,6 +406,8 @@ void draw() {
   }
   else thePlayer.move((A.getValue() < 0 ? radians(180) : 0) + atan((W.getValue() + S.getValue()) / (A.getValue() + D.getValue())));
   
+  if(dialogues.size() > 0) dialogues.get(0).drawDialogue();
+  
 }
 
 Trident t;
@@ -413,4 +449,5 @@ void keyReleased() {
       case RIGHT: D.release(); break;
     }
   }
+  if(key==' ' && dialogues.size() > 0) dialogues.remove(0);
 }
