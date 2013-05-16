@@ -275,6 +275,7 @@ boolean isFree(int x, int y) {
 Human thePlayer;
 
 ArrayList<Thing> environment;
+ArrayList<Thing> backgrounds;
 ArrayList<Actor> units; //make an array
 ArrayList<Trident> weapons;
 
@@ -294,6 +295,12 @@ void setup() {
   symbols.put('a',"wall.png");
   symbols.put('w',"water.png");
   symbols.put('b',"bush.png");
+  symbols.put('t',"tree.png");
+  symbols.put('l',"dirtTextures/l.png");
+  symbols.put('r',"dirtTextures/r.png");
+  symbols.put('u',"dirtTextures/u.png");
+  symbols.put('d',"dirtTextures/d.png");
+  symbols.put('x',"blank.png");
   loadGrid("grid.txt");
     
   thePlayer = new Human("playerSprites");
@@ -306,11 +313,15 @@ void setup() {
     units.get(i).canFly = true;
   }
   
-  environment = new ArrayList<Thing>();
+  backgrounds = new ArrayList<Thing>();
   for (int x = -1; x < 30; x++) {
     for (int y = 0; y < 7; y++)
-      environment.add(new Thing("background.jpg", 375 * x, 275 * y, 375));
+      backgrounds.add(new Thing("background.jpg", 375 * x, 275 * y, 375));
   }
+  
+  environment = new ArrayList<Thing>();
+  environment.add(new Thing("temple.png", 0, 0));
+  environment.get(0).goToCoords(35, 6);
   
   weapons = new ArrayList<Trident>();
 }
@@ -319,7 +330,7 @@ void draw() {
   background(0);
   imageMode(CENTER);
   
-  for (Thing thing : environment)
+  for (Thing thing : backgrounds)
     thing.render(thePlayer);
   
   for (int y = 0; y < grid.length; y++) {
@@ -329,9 +340,12 @@ void draw() {
       }
     }
   }
-    
+  
   thePlayer.render();
   
+  for (Thing thing : environment)
+    thing.render(thePlayer);
+    
   for (int i = 0; i < weapons.size(); i++) {
     weapons.get(i).render(thePlayer);
     if (weapons.get(i).isDead) {

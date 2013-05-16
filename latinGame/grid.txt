@@ -1,17 +1,17 @@
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwtttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwaaaaatttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt              ttttttttttttttttttt
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt              ttttttttttttttttt
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwaaaaattttttttttttttbttttttttttttttttttttttttttbtttttttttttttttttttttttt              ttttttttttbbtttttttt
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwtttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttbttttttttt              tttttttbbbbttttttt
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwaaaaaaaatttttttttttaaaattttttttttt       aaaaaatttttttttttttttttttttttttttttttttttaaaaaaaaattttttttttttt
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwtttttttttttttttttttttttttttttttttttttttttttttttttttt    ttttttttttttttttttttt
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwtttttttttttttttttttttttttt    ttttttttttttttttttttttttttttttttttttttttttttt
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwtttttt      ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwttttttttttttttttttttttttttttttttttttttt
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwt     bbbtttttttttttttttttttttttttttttttttttttttt    tttttttbttttttttttttt
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwttt     bbbbbbtttttt    ttttttttttbttttttttttttttttttttttttttttttttttbb
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwttt     bbbbbbbbtttttttttttttttttttttttttttttttttttttttbttttttttttttttttttt
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwttt     bbbbbbbbbttttttttttttbbttttbb             bbbbbbbbt
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwww   xxxxx
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwtttttttt
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwtttt
-wwwwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwwwww
-wwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwww              uuuu
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwww             l    r
+wwwwwwwwwwwwwwwwwwwwwwwwwww                l    r
+wwwwwwwwwwwwwwwwwwwwwwwwwt                 l    r
+wwwwwwwwwwwwwwwwwwwwwww                     dddd
 wwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwww
