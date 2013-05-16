@@ -40,6 +40,11 @@ class Thing {
   public int xPos() {return this.x;}
   public int yPos() {return this.y;}
   
+  protected void goToCoords(int x, int y) {
+    this.x = Tile.WIDTH * x;
+    this.y = Tile.WIDTH * y;
+  }
+  
   public void render(Actor player) {
     image(img, x - player.x + width / 2, y - player.y + height / 2);
   }
@@ -54,6 +59,8 @@ class Tile extends Thing {
     super(URL, WIDTH * x, WIDTH * y);
     img.resize(0, WIDTH);
   }
+  
+  //passable?
   
 }
 
@@ -152,7 +159,7 @@ class Human extends Actor {
   private int ammo;
   
   public Human(String URL) {
-     this(URL,50,50);
+     this(URL,0,0);
   }
   
   public Human(String URL, int x, int y) {
@@ -244,8 +251,11 @@ class Key {
 ///////////////////// MAIN CLASS STUFF STARTS HERE \\\\\\\\\\\\\\\\\\\\\\\\\\
 
 void loadGrid(String URL) {
-    grid = new Tile[50][400];
+    //grid = new Tile[50][400];
     String[] lines = loadStrings(URL);
+    println(lines.length);
+    println(lines[0].length());
+    grid = new Tile[lines.length][lines[0].length()];
     for (int y = 0; y < lines.length; y++) {
       for (int x = 0; x < lines[y].length(); x++) {
         if (symbols.get(lines[y].charAt(x)) != null)
@@ -282,9 +292,12 @@ void setup() {
   size(500,400);
   
   symbols.put('a',"wall.png");
+  symbols.put('w',"water.png");
+  symbols.put('b',"bush.png");
   loadGrid("grid.txt");
     
   thePlayer = new Human("playerSprites");
+  thePlayer.goToCoords(30,8);
   thePlayer.velocity *= 2;
    
   units = new ArrayList<Actor>();
