@@ -29,7 +29,6 @@ class DialogueBox{
     //rect(0,0,width,height/6,15);
     image(gradientBackground,width/2,height/16+5);
     fill(0);
-    //textFont(font);
     text(speaker + ": \n" + dialogue,width/16*4+20,height/24);
     image(portrait,width/8,height/12);
 
@@ -86,14 +85,15 @@ class Thing {
 class Tile extends Thing {
   
   private static final int WIDTH = 36;
+  
+  public boolean passable;
     
   public Tile(String URL, int x, int y) {
     super(URL, WIDTH * x, WIDTH * y);
+    passable = false;
     img.resize(0, WIDTH);
   }
-  
-  //passable?
-  
+    
 }
 
 class Actor extends Thing implements Movable {
@@ -199,6 +199,11 @@ class Human extends Actor {
     ammo = 2;
   }
   
+  public void kill() {
+    dialogues.add(new DialogueBox("Neptune","trident.png","De mortuis nil nisi bonum."));
+    super.kill();
+  }
+  
   public void giveTrident() {
     ammo++;
   }
@@ -288,10 +293,15 @@ void loadGrid(String URL) {
     println(lines.length);
     println(lines[0].length());
     grid = new Tile[lines.length][lines[0].length()];
+    String name;
     for (int y = 0; y < lines.length; y++) {
       for (int x = 0; x < lines[y].length(); x++) {
-        if (symbols.get(lines[y].charAt(x)) != null)
-          grid[y][x] = new Tile(symbols.get(lines[y].charAt(x)), x, y);
+        name = symbols.get(lines[y].charAt(x));
+        if (name != null) {
+          grid[y][x] = new Tile(name.substring(1), x, y);
+          if (name.charAt(0) == '.')
+            grid[y][x].passable = true;
+        }
       }
     }
 }
@@ -301,7 +311,7 @@ boolean isFree(int x, int y) {
   y /= Tile.WIDTH;
   if (y < 0 || y >= grid.length || x < 0 || x >= grid[0].length)
     return false;
-  return grid[y][x] == null;
+  return grid[y][x] == null || grid[y][x].passable;
 }
 
 Human thePlayer;
@@ -322,29 +332,30 @@ Key S = new Key(1);
 Key D = new Key(1);
 
 void setup() {
-  dialogues.add(new DialogueBox("Jerome","harpy.png","Yo, I am so ghetto! I been to prison like 8 times in the past week!"));
-  dialogues.add(new DialogueBox("Matthew Hull","trident.png","I'm so ratched it's scary!"));
+  dialogues.add(new DialogueBox("Fury","harpy.png","Cave!"));
+  dialogues.add(new DialogueBox("Neptune","trident.png","Sum deus maris"));
   size(500,400);
   
-  symbols.put('a',"wall.png");
-  symbols.put('w',"water.png");
-  symbols.put('b',"grass.png");
-  symbols.put('t',"tree.png");
-  symbols.put('l',"dirtTextures/l.png");
-  symbols.put('r',"dirtTextures/r.png");
-  symbols.put('u',"dirtTextures/u.png");
-  symbols.put('d',"dirtTextures/d.png");
-  symbols.put('x',"blank.png");
-  symbols.put('p',"road/road1.png");
-  loadGrid("grid.txt");
+  symbols.put('a',"/wall.png");
+  symbols.put('w',"/water.png");
+  symbols.put('b',"/grass.png");
+  symbols.put('t',"/tree.png");
+  symbols.put('l',"/dirtTextures/l.png");
+  symbols.put('r',"/dirtTextures/r.png");
+  symbols.put('u',"/dirtTextures/u.png");
+  symbols.put('d',"/dirtTextures/d.png");
+  symbols.put('x',"/blank.png");
+  symbols.put('p',".road/road1.png");
+  loadGrid("/grid.txt");
     
   thePlayer = new Human("playerSprites");
-  thePlayer.goToCoords(30,8);
+  thePlayer.goToCoords(34,9);
   thePlayer.velocity *= 2;
    
   units = new ArrayList<Actor>();
-  for (int i = 0; i < 10; i++) {
-    units.add(new Actor("furySprites", 100 + 100 * i, 400));
+  for (int i = 0; i < 3; i++) {
+    units.add(new Actor("furySprites",0,0));
+    units.get(i).goToCoords(30 + 2 * i, 2);
     units.get(i).canFly = true;
   }
   
@@ -359,52 +370,64 @@ void setup() {
   environment.get(0).goToCoords(35, 6);
   
   weapons = new ArrayList<Trident>();
+  for (int i = 0; i < 1; i++)
+    weapons.add(new Trident("trident.png", 0, 0, 0, 0, units, thePlayer));
+  weapons.get(0).goToCoords(113,20);
 }
 
 void draw() {
-  background(0);
   imageMode(CENTER);
   
-  for (Thing thing : backgrounds)
-    thing.render(thePlayer);
+  if (thePlayer.isDead) {
+    background(0,0,0);
+   }
+  else {
+    background(0);
   
-  for (int y = 0; y < grid.length; y++) {
-    for (int x = 0; x < grid[0].length; x++) {
-      if (grid[y][x] != null) {
-        grid[y][x].render(thePlayer);
+    for (Thing thing : backgrounds)
+      thing.render(thePlayer);
+    
+    for (int y = 0; y < grid.length; y++) {
+      for (int x = 0; x < grid[0].length; x++) {
+        if (grid[y][x] != null) {
+          grid[y][x].render(thePlayer);
+        }
       }
     }
-  }
-  
-  thePlayer.render();
-  
-  for (Thing thing : environment)
-    thing.render(thePlayer);
     
-  for (int i = 0; i < weapons.size(); i++) {
-    weapons.get(i).render(thePlayer);
-    if (weapons.get(i).isDead) {
-      weapons.remove(i);
-      i--;
+    thePlayer.render();
+    
+    for (Thing thing : environment)
+      thing.render(thePlayer);
+      
+    for (int i = 0; i < weapons.size(); i++) {
+      weapons.get(i).render(thePlayer);
+      if (weapons.get(i).isDead) {
+        weapons.remove(i);
+        i--;
+      }
     }
-  }
-  
-  Actor unit;
-  for (int i = 0; i < units.size(); i++) {
-    unit = units.get(i);
-    unit.move((float)(unit.getAngleBetween(thePlayer)));
-    unit.render(thePlayer);
-    if (unit.isDead) {
-      units.remove(i);
-      i--;
+    
+    Actor unit;
+    for (int i = 0; i < units.size(); i++) {
+      unit = units.get(i);
+      unit.move((float)(unit.getAngleBetween(thePlayer)));
+      unit.render(thePlayer);
+      if (unit.overlaps(thePlayer.xPos(),thePlayer.yPos()))
+        thePlayer.kill();
+      if (unit.isDead) {
+        units.remove(i);
+        i--;
+      }
     }
-  }
+    
+    if (A.getValue() + D.getValue() == 0) {
+      if (W.getValue() + S.getValue() != 0)
+        thePlayer.moveD((Integer) ((W.getValue() + S.getValue())/abs(W.getValue() + S.getValue()) * 90));
+    }
+    else thePlayer.move((A.getValue() < 0 ? radians(180) : 0) + atan((W.getValue() + S.getValue()) / (A.getValue() + D.getValue())));
   
-  if (A.getValue() + D.getValue() == 0) {
-    if (W.getValue() + S.getValue() != 0)
-      thePlayer.moveD((Integer) ((W.getValue() + S.getValue())/abs(W.getValue() + S.getValue()) * 90));
   }
-  else thePlayer.move((A.getValue() < 0 ? radians(180) : 0) + atan((W.getValue() + S.getValue()) / (A.getValue() + D.getValue())));
   
   if(dialogues.size() > 0) dialogues.get(0).drawDialogue();
   
