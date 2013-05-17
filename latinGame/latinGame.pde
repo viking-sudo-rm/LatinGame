@@ -338,7 +338,7 @@ void setup() {
   
   symbols.put('a',"/rock.png");
   symbols.put('w',"/water.png");
-  symbols.put('b',"/grass.png");
+  symbols.put('b',"/bush.png");
   symbols.put('t',"/tree.png");
   symbols.put('l',"/dirtTextures/l.png");
   symbols.put('r',"/dirtTextures/r.png");
