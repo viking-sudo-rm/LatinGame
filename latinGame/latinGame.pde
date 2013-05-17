@@ -1,4 +1,4 @@
-interface Movable {
+sinterface Movable {
   
   public void move(float theta);
   
