@@ -336,7 +336,7 @@ void setup() {
   dialogues.add(new DialogueBox("Neptune","trident.png","Sum deus maris"));
   size(500,400);
   
-  symbols.put('a',"/wall.png");
+  symbols.put('a',"/rock.png");
   symbols.put('w',"/water.png");
   symbols.put('b',"/grass.png");
   symbols.put('t',"/tree.png");
