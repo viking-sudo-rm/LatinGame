@@ -1,4 +1,4 @@
-sinterface Movable {
+interface Movable {
   
   public void move(float theta);
   
@@ -14,19 +14,12 @@ class DialogueBox{
     speaker = speaking;
     dialogue = wordsSaid;
     portrait = loadImage(speakerPicURL);
-    //image(portrait,0, 0);
     portrait.resize(0, 50);
     gradientBackground = loadImage("Gradient2.png");
     gradientBackground.resize(600,100);
-    //portrait.resize(width,height);
-    //font = loadFont("CENTURY.TTF");
 }
   
   public void drawDialogue(){
-    //translate(width/2,0);
-    //fill(0,0,255);
-    //rect(0,0,width,height);
-    //rect(0,0,width,height/6,15);
     image(gradientBackground,width/2,height/16+5);
     fill(0);
     text(speaker + ": \n" + dialogue,width/16*4+20,height/24);
@@ -63,13 +56,9 @@ class Thing {
   public void kill() {
     isDead = true;
   }
-  
-  //getter methods...just in case, ya know...
-  //JASEN U FUCKING OOP GOODY 2SHOES OMFG LEAVE
-  //i actually used it lol
 
-  public int xPos() {return this.x;}
-  public int yPos() {return this.y;}
+  public int xPos() {return x;}
+  public int yPos() {return y;}
   
   protected void goToCoords(int x, int y) {
     this.x = Tile.WIDTH * x;
@@ -94,6 +83,21 @@ class Tile extends Thing {
     img.resize(0, WIDTH);
   }
     
+}
+
+class Trigger extends Tile {
+    
+  public boolean active;
+  
+  public Trigger(String URL, int x, int y) {
+    super(URL, x, y);
+    active = true;
+  }
+  
+  public boolean check() {
+    return active && x / Tile.WIDTH == thePlayer.xPos() / Tile.WIDTH && y / Tile.WIDTH == thePlayer.yPos() / Tile.WIDTH;//thePlayer.overlaps(x + img.width, y + img.height / 2);
+  }
+  
 }
 
 class Actor extends Thing implements Movable {
@@ -189,6 +193,7 @@ class Actor extends Thing implements Movable {
 class Human extends Actor {
   
   private int ammo;
+  public boolean hasWon;
   
   public Human(String URL) {
      this(URL,0,0);
@@ -196,7 +201,8 @@ class Human extends Actor {
   
   public Human(String URL, int x, int y) {
     super(URL, x, y);
-    ammo = 2;
+    ammo = 0;
+    hasWon = false;
   }
   
   public void kill() {
@@ -204,15 +210,19 @@ class Human extends Actor {
     super.kill();
   }
   
+  public void win() {
+    hasWon = true;
+  }
+  
   public void giveTrident() {
     ammo++;
   }
   
-  public Trident attack(Thing target, ArrayList<Actor> targets) {    
+  public Trident attack(Thing target) {    
     if (ammo < 1)
       return null;      
     ammo--;
-    return new Trident("trident.png", x, y, (float) getAngleBetween(target), distanceTo(target), targets, thePlayer);
+    return new Trident("trident.png", x, y, (float) getAngleBetween(target), distanceTo(target));
   }
   
 }
@@ -221,18 +231,14 @@ class Trident extends Thing {
   
   private float theta;
   private double distance;
-  private ArrayList<Actor> targets;
-  private Human thrower;
   private int numUpdates;
   
   private static final int VELOCITY = 8;
   
-  public Trident(String URL, int x, int y, float theta, double distance, ArrayList<Actor> targets, Human thrower) {
+  public Trident(String URL, int x, int y, float theta, double distance) {
     super(URL, x, y);
     this.theta = theta;
     this.distance = distance;
-    this.targets = targets;
-    this.thrower = thrower;
     numUpdates = 0;
     
   }
@@ -240,13 +246,13 @@ class Trident extends Thing {
   protected void update() {
     if (numUpdates * VELOCITY < distance) {
       numUpdates++;
-      for (int i = 0; i < targets.size(); i++) {
-        if (targets.get(i).overlaps(x + (numUpdates * VELOCITY + img.width / 2) * cos(theta), y + (numUpdates * VELOCITY) * sin(theta)))
-          targets.get(i).kill();
+      for (int i = 0; i < units.size(); i++) {
+        if (units.get(i).overlaps(x + (numUpdates * VELOCITY + img.width / 2) * cos(theta), y + (numUpdates * VELOCITY) * sin(theta)))
+          units.get(i).kill();
       }
     }
-    else if (thrower.overlaps(x + (numUpdates * VELOCITY + img.width / 2) * cos(theta), y + (numUpdates * VELOCITY) * sin(theta)) || thrower.overlaps(x + (numUpdates * VELOCITY - img.width / 2) * cos(theta), y + (numUpdates * VELOCITY) * sin(theta))) {
-      thrower.giveTrident();
+    else if (thePlayer.overlaps(x + (numUpdates * VELOCITY + img.width / 2) * cos(theta), y + (numUpdates * VELOCITY) * sin(theta)) || thePlayer.overlaps(x + (numUpdates * VELOCITY - img.width / 2) * cos(theta), y + (numUpdates * VELOCITY) * sin(theta))) {
+      thePlayer.giveTrident();
       isDead = true;
     }
   }
@@ -288,19 +294,28 @@ class Key {
 ///////////////////// MAIN CLASS STUFF STARTS HERE \\\\\\\\\\\\\\\\\\\\\\\\\\
 
 void loadGrid(String URL) {
-    //grid = new Tile[50][400];
     String[] lines = loadStrings(URL);
     println(lines.length);
     println(lines[0].length());
+    weapons = new ArrayList<Trident>();
     grid = new Tile[lines.length][lines[0].length()];
     String name;
     for (int y = 0; y < lines.length; y++) {
       for (int x = 0; x < lines[y].length(); x++) {
         name = symbols.get(lines[y].charAt(x));
         if (name != null) {
-          grid[y][x] = new Tile(name.substring(1), x, y);
-          if (name.charAt(0) == '.')
-            grid[y][x].passable = true;
+          if (name == "3") {
+            weapons.add(new Trident("trident.png", 0, 0, 0, 0));
+            weapons.get(weapons.size() - 1).goToCoords(x,y);
+          }
+          else {
+            if (name.charAt(0) == 'T')
+              grid[y][x] = new Trigger(name.substring(1), x, y);
+            else
+              grid[y][x] = new Tile(name.substring(1), x, y);
+            if (name.charAt(0) != '/')
+                grid[y][x].passable = true;
+          }
         }
       }
     }
@@ -332,20 +347,21 @@ Key S = new Key(1);
 Key D = new Key(1);
 
 void setup() {
-  dialogues.add(new DialogueBox("Fury","harpy.png","Cave!"));
-  dialogues.add(new DialogueBox("Neptune","trident.png","Sum deus maris"));
+
   size(500,400);
   
   symbols.put('a',"/rock.png");
   symbols.put('w',"/water.png");
+  symbols.put('d',".water.png");
+  symbols.put('W',"Twater.png");
   symbols.put('b',"/bush.png");
   symbols.put('t',"/tree.png");
   symbols.put('l',"/dirtTextures/l.png");
   symbols.put('r',"/dirtTextures/r.png");
-  symbols.put('u',"/dirtTextures/u.png");
-  symbols.put('d',"/dirtTextures/d.png");
   symbols.put('x',"/blank.png");
   symbols.put('p',".road/road1.png");
+  symbols.put('E',"Tgrass.png");
+  symbols.put('T',"3");
   loadGrid("/grid.txt");
     
   thePlayer = new Human("playerSprites");
@@ -368,11 +384,13 @@ void setup() {
   environment = new ArrayList<Thing>();
   environment.add(new Thing("temple.png", 0, 0));
   environment.get(0).goToCoords(35, 6);
+  //environment.add(new Trigger("grass.png", 0, 0));
+  //environment.get(1).goToCoords(15,29);    
   
-  weapons = new ArrayList<Trident>();
-  for (int i = 0; i < 1; i++)
-    weapons.add(new Trident("trident.png", 0, 0, 0, 0, units, thePlayer));
-  weapons.get(0).goToCoords(113,20);
+  draw();
+  
+  dialogues.add(new DialogueBox("Fury","harpy.png","Cave!"));
+  dialogues.add(new DialogueBox("Neptune","trident.png","Sum deus maris"));
 }
 
 void draw() {
@@ -381,8 +399,16 @@ void draw() {
   if (thePlayer.isDead) {
     background(0,0,0);
    }
-  else {
-    background(0);
+  else if (dialogues.size() == 0) {
+        
+    for (int i = 29; i < 32; i++) {
+      if(((Trigger) grid[29][15]).check()) {
+        println("homie you won!");
+        thePlayer.win();
+      }
+    }
+    
+    if (thePlayer.hasWon) thePlayer.move(PI);
   
     for (Thing thing : backgrounds)
       thing.render(thePlayer);
@@ -395,11 +421,9 @@ void draw() {
       }
     }
     
-    thePlayer.render();
-    
     for (Thing thing : environment)
       thing.render(thePlayer);
-      
+        
     for (int i = 0; i < weapons.size(); i++) {
       weapons.get(i).render(thePlayer);
       if (weapons.get(i).isDead) {
@@ -407,6 +431,8 @@ void draw() {
         i--;
       }
     }
+         
+    thePlayer.render();
     
     Actor unit;
     for (int i = 0; i < units.size(); i++) {
@@ -421,12 +447,15 @@ void draw() {
       }
     }
     
-    if (A.getValue() + D.getValue() == 0) {
-      if (W.getValue() + S.getValue() != 0)
-        thePlayer.moveD((Integer) ((W.getValue() + S.getValue())/abs(W.getValue() + S.getValue()) * 90));
+    if (!thePlayer.hasWon) {
+      if (A.getValue() + D.getValue() == 0) {
+        if (W.getValue() + S.getValue() != 0)
+          thePlayer.moveD((Integer) ((W.getValue() + S.getValue())/abs(W.getValue() + S.getValue()) * 90));
+      }
+      else thePlayer.move((A.getValue() < 0 ? PI : 0) + atan((W.getValue() + S.getValue()) / (A.getValue() + D.getValue())));
     }
-    else thePlayer.move((A.getValue() < 0 ? radians(180) : 0) + atan((W.getValue() + S.getValue()) / (A.getValue() + D.getValue())));
-  
+    
+    //}
   }
   
   if(dialogues.size() > 0) dialogues.get(0).drawDialogue();
@@ -436,7 +465,7 @@ void draw() {
 Trident t;
 
 void mousePressed() {
-  t = thePlayer.attack(new Thing(mouseX + thePlayer.xPos() - width / 2, mouseY + thePlayer.yPos() - height / 2), units);
+  t = thePlayer.attack(new Thing(mouseX + thePlayer.xPos() - width / 2, mouseY + thePlayer.yPos() - height / 2));
   if (t != null) weapons.add(t);
 }
 
