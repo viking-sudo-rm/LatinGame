@@ -87,15 +87,21 @@ class Tile extends Thing {
 
 class Trigger extends Tile {
     
-  public boolean active;
+  private boolean active;
   
   public Trigger(String URL, int x, int y) {
     super(URL, x, y);
     active = true;
   }
   
+  public boolean checkOnce() {
+    boolean flag = active && x / Tile.WIDTH == thePlayer.xPos() / Tile.WIDTH && y / Tile.WIDTH == thePlayer.yPos() / Tile.WIDTH;
+    active = false;
+    return flag;
+  }
+  
   public boolean check() {
-    return active && x / Tile.WIDTH == thePlayer.xPos() / Tile.WIDTH && y / Tile.WIDTH == thePlayer.yPos() / Tile.WIDTH;//thePlayer.overlaps(x + img.width, y + img.height / 2);
+    return active && x / Tile.WIDTH == thePlayer.xPos() / Tile.WIDTH && y / Tile.WIDTH == thePlayer.yPos() / Tile.WIDTH;
   }
   
 }
@@ -400,15 +406,6 @@ void draw() {
     background(0,0,0);
    }
   else if (dialogues.size() == 0) {
-        
-    for (int i = 29; i < 32; i++) {
-      if(((Trigger) grid[29][15]).check()) {
-        println("homie you won!");
-        thePlayer.win();
-      }
-    }
-    
-    if (thePlayer.hasWon) thePlayer.move(PI);
   
     for (Thing thing : backgrounds)
       thing.render(thePlayer);
@@ -447,7 +444,16 @@ void draw() {
       }
     }
     
-    if (!thePlayer.hasWon) {
+    for (int i = 28; i < 31; i++) {
+      if(((Trigger) grid[i][15]).check()) {
+        println("homie you won!");
+        thePlayer.win();
+      }
+    }
+    
+    if (thePlayer.hasWon)
+      thePlayer.move(PI);
+    else {
       if (A.getValue() + D.getValue() == 0) {
         if (W.getValue() + S.getValue() != 0)
           thePlayer.moveD((Integer) ((W.getValue() + S.getValue())/abs(W.getValue() + S.getValue()) * 90));
@@ -455,7 +461,6 @@ void draw() {
       else thePlayer.move((A.getValue() < 0 ? PI : 0) + atan((W.getValue() + S.getValue()) / (A.getValue() + D.getValue())));
     }
     
-    //}
   }
   
   if(dialogues.size() > 0) dialogues.get(0).drawDialogue();
