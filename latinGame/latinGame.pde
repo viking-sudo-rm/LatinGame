@@ -263,7 +263,7 @@ class Human extends Actor {
   }
   
   public void kill() {
-    dialogues.add(new EndGameDialogueBox("Neptune","trident.png","De mortuis nil nisi bonum."));
+    dialogues.add(new EndGameDialogueBox("Neptune","poseidon.png","De mortuis nil nisi bonum."));
     super.kill();
   }
   
@@ -470,7 +470,7 @@ void setupGame() {
   draw();
   
   dialogues.add(new DialogueBox("Fury","harpy.png","Cave!"));
-  dialogues.add(new DialogueBox("Neptune","trident.png","Sum deus maris"));
+  dialogues.add(new DialogueBox("Neptune","poseidon.png","Sum deus maris"));
 }
 
 void drawGame() {
@@ -533,7 +533,7 @@ void drawGame() {
       thePlayer.move(PI);
       for (int i = 28; i < 31; i++) {
         if(((Trigger) grid[i][13]).check()) {
-          dialogues.add(new DialogueBox("Fury","harpy.png","Alas, he survived!"));
+          dialogues.add(new DialogueBox("Neptune","poseidon.png","Alas, you survived!"));
           dialogues.add(new ShowImageDialogueBox("Fury","harpy.png","The diver was named after him!", "painting.jpg"));
           dialogues.add(new EndGameDialogueBox("Fury","harpy.png","Cave!"));
         }
@@ -559,7 +559,6 @@ void setupMenu() {
 
 void drawMenu() {
   background(0);
-  //text("Samnite Survival",width/16*4+20,height/24);
   new DialogueBox("SnorriDevTeam presents","harpy.png","Samnite Survival").drawDialogue();
   joinGame.render();
   if (joinGame.isPressed()) setupGame();
