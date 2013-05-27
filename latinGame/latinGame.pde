@@ -377,10 +377,9 @@ void setupGame() {
   symbols.put('W',"Twater.png");
   symbols.put('b',"/bush.png");
   symbols.put('t',"/tree.png");
-  symbols.put('l',"/dirtTextures/l.png");
-  symbols.put('r',"/dirtTextures/r.png");
   symbols.put('x',"/blank.png");
   symbols.put('p',".road/road1.png");
+  symbols.put('r',".road/roadside.png");
   symbols.put('E',"Tgrass.png");
   symbols.put('T',"3");
   loadGrid("/grid.txt");
