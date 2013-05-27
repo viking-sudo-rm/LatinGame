@@ -4,6 +4,29 @@ interface Movable {
   
 }
 
+class Stats {
+  
+  private int tridentsPickedUp;
+  private int kills;
+  
+  public Stats() {
+  }
+  
+  public void pickupTrident() {
+    tridentsPickedUp++;
+  }
+  
+  public void killHarpy() {
+    kills++;
+  }
+  
+  public int getTridentsPickupUp() {return tridentsPickedUp;}
+  public int getKills() {return kills;}
+  
+  public int getScore() {return kills + tridentsPickedUp;}//kills / (time * throws)
+  
+}
+
 class Button {
   
   int x, y;
@@ -251,6 +274,7 @@ class Human extends Actor {
   
   private int ammo;
   public boolean hasWon;
+  public Stats stats;
   
   public Human(String URL) {
      this(URL,0,0);
@@ -260,6 +284,7 @@ class Human extends Actor {
     super(URL, x, y);
     ammo = 0;
     hasWon = false;
+    stats = new Stats();
   }
   
   public void kill() {
@@ -279,7 +304,7 @@ class Human extends Actor {
     if (ammo < 1)
       return null;      
     ammo--;
-    return new Trident("trident.png", x, y, (float) getAngleBetween(target), distanceTo(target));
+    return new Trident("trident.png", x, y, (float) getAngleBetween(target), distanceTo(target), true);
   }
   
 }
@@ -289,15 +314,21 @@ class Trident extends Thing {
   private float theta;
   private double distance;
   private int numUpdates;
-  
+  private boolean pickedUp;
+    
   private static final int VELOCITY = 8;
   
   public Trident(String URL, int x, int y, float theta, double distance) {
     super(URL, x, y);
+    pickedUp = false;
     this.theta = theta;
     this.distance = distance;
-    numUpdates = 0;
-    
+    numUpdates = 0;  
+  }
+  
+  public Trident(String URL, int x, int y, float theta, double distance, boolean pickedUp) {
+    this(URL, x, y, theta, distance);
+    this.pickedUp = pickedUp;
   }
   
   protected void update() {
@@ -309,6 +340,13 @@ class Trident extends Thing {
       }
     }
     else if (thePlayer.overlaps(x + (numUpdates * VELOCITY + img.width / 2) * cos(theta), y + (numUpdates * VELOCITY) * sin(theta)) || thePlayer.overlaps(x + (numUpdates * VELOCITY - img.width / 2) * cos(theta), y + (numUpdates * VELOCITY) * sin(theta))) {
+      if (! pickedUp) {
+        if (thePlayer.stats.tridentsPickedUp == 0)
+          dialogues.add(new DialogueBox("Neptune","poseidon.png","Use this weapon to kill harpies and make sure to retrie"));
+        else
+          dialogues.add(new DialogueBox("Neptune","poseidon.png","Excellent, you've found another trident!"));
+        thePlayer.stats.pickupTrident();
+      }
       thePlayer.giveTrident();
       isDead = true;
     }
@@ -354,7 +392,6 @@ void loadGrid(String URL) {
     String[] lines = loadStrings(URL);
     println(lines.length);
     println(lines[0].length());
-    weapons = new ArrayList<Trident>();
     grid = new Tile[lines.length][lines[0].length()];
     String name;
     for (int y = 0; y < lines.length; y++) {
@@ -367,7 +404,7 @@ void loadGrid(String URL) {
           }
           else if (name == "H") {
             environment.add(new Thing("house.png", 0, 0));
-            environment(1).goToCoords(x, y);
+            environment.get(environment.size() - 1).goToCoords(x, y);
           } else {
             if (name.charAt(0) == 'T')
               grid[y][x] = new Trigger(name.substring(1), x, y);
@@ -390,7 +427,6 @@ boolean isFree(int x, int y) {
 }
 
 boolean inGame;
-
 Button joinGame;
 
 Human thePlayer;
@@ -448,15 +484,16 @@ void setupGame() {
   symbols.put('u',".road/roadedgedown.png");
   symbols.put('c',".road/roadcorner.png");
   symbols.put('^',".road/roadedgeup.png");
+  symbols.put('&',".road/roadinter.png");
   symbols.put('E',"Tgrass.png");
   symbols.put('T',"3");
   symbols.put('H',"H");
-  loadGrid("/grid.txt");
     
   thePlayer = new Human("playerSprites");
   thePlayer.goToCoords(34,9 );
   thePlayer.velocity *= 2;
-   
+  
+  weapons = new ArrayList<Trident>();  
   units = new ArrayList<Actor>();
   
   backgrounds = new ArrayList<Thing>();
@@ -467,9 +504,11 @@ void setupGame() {
   
   environment = new ArrayList<Thing>();
   environment.add(new Thing("temple.png", 0, 0));
-  environment.get(0).goToCoords(35, 6);    
+  environment.get(0).goToCoords(35, 6);
+
+  loadGrid("/grid.txt");  
   
-  drawGame();
+  draw();
   
   dialogues.add(new DialogueBox("Fury","harpy.png","Cave!"));
   dialogues.add(new DialogueBox("Neptune","poseidon.png","Sum deus maris"));

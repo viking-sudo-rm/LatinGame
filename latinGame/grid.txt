@@ -22,17 +22,17 @@ wwwwwwwwwwwwwwwttttttttttttttaaaaaaaaaaaaaaaaaattttttttttttttttttttttttttttttttt
 wwwwwwwwwwwwwwwtttttttttt      aaaaaaa bbb         ttttttttttttttttttttttttttttttttttttttttttttttbbbbbbbbbbbttwwbt  ttttttttt     p    awwwwttttttttttttttttt
 wwwwwwwwwwwwwwwtttttttt        tttt                  ttttttt     ttttttttttttttttttttttttttt  tttbbbbbbbbbb      bttttttttttt     p    awwwwttttttttttttttttt
 wwwwwwwwwwwwwwwttttttt                       ^                       b b b tttttttttttttt           aabbbbb       ttttttttttt     p    aaawwttttttttttttttttt
-wwwwwwwwwwwwwwwtt         Hxxx    Hxxx       p       Hxxx    Hxxx     t t  tttttttttttttt   a         babbbbtt   tttttttttttt     u    aaawwttttttttttttttttt
-wwwwwwwwwwwwwwwt          xxxx    xxxx       p       xxxx    xxxx        b ttttaaaaaaaaaatttttaaa     abbbbbtt   tttttttttttt          aaawwttttttttttttttttt
-wwwwwwwwwwwwwwwb          xxxx    xxxx       p       xxxx    xxxx          ttttaaaaaaaaaaaaaaaaaa     aaaaaaaa   aaaaaaaaa             aaaaaaa aaaaaaaaaaa
-wwwwwwwwwwwwwwWb       t  xxxx t  xxxx  t    p    t  xxxx  t xxxx  t       ttttaaaaaaaaaa      a      a             aa                 aaaaaaa aaaaaaaaaaa
+wwwwwwwwwwwwwwwtt                            p                        t t  tttttttttttttt   a         babbbbtt   tttttttttttt     u    aaawwttttttttttttttttt
+wwwwwwwwwwwwwwwt          xxx     xxx        p       xxx     xxx         b ttttaaaaaaaaaatttttaaa     abbbbbtt   tttttttttttt          aaawwttttttttttttttttt
+wwwwwwwwwwwwwwwb          xHx     xHx        p       xHx     xHx           ttttaaaaaaaaaaaaaaaaaa     aaaaaaaa   aaaaaaaaa             aaaaaaa aaaaaaaaaaa
+wwwwwwwwwwwwwwWb       t  xxx  t  xxx   t    p    t  xxx   t xxx   t       ttttaaaaaaaaaa      a      a             aa                 aaaaaaa aaaaaaaaaaa
 wwwwwwwwwwwwwWdE                             p                                                        a             aa                 aaaaaaa aaa   aaaaa
-wwwwwwwwwwwwwWdE   rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrre                      aa     a             aa     a     a     aaaaaaaaaaa   aaaaa
+wwwwwwwwwwwwwWdE   rrrrrrrrrrrrrrrrrrrrrrrrrr&rrrrrrrrrrrrrrrrrrrrrrrrrre                      aa     a             aa     a     a     aaaaaaaaaaa   aaaaa
 wwwwwwwwwwwwwWdE                             p                                                 a      a      aaaaaaaaa     a     a      aaaaaaaaaa   aaaaa
-wwwwwwwwwwwwwwwb       t  Hxxx t  Hxxx  t    p    t  Hxxx  t Hxxx  t       ttttttttttaaa     a                             a   aaa     aaaaaaaaaaaaaaaaaaa
-wwwwwwwwwwwwwwwb          xxxx    xxxx       p       xxxx    xxxx           tttttttttaaaa      a                           a     a      aaaaaaaaaaaaaaaaaa
-wwwwwwwwwwwwwwwtt         xxxx    xxxx       p       xxxx    xxxx             tttttttaaaa      aaaaaaaa   aaaaaaaaaaaaaa   a            aaaaaa aaaaaaaaaaa
-wwwwwwwwwwwwwwwtt         xxxx    xxxx       p       xxxx    xxxx               tttttaaaa          a        a              a     a     aaaaaaa aaaaaaaaaaa
+wwwwwwwwwwwwwwwb       t  xxx  t  xxx   t    p    t  xxx   t xxx   t       ttttttttttaaa     a                             a   aaa     aaaaaaaaaaaaaaaaaaa
+wwwwwwwwwwwwwwwb          xHx     xHx        p       xHx     xHx            tttttttttaaaa      a                           a     a      aaaaaaaaaaaaaaaaaa
+wwwwwwwwwwwwwwwtt         xxx     xxx        p       xxx     xxx              tttttttaaaa      aaaaaaaa   aaaaaaaaaaaaaa   a            aaaaaa aaaaaaaaaaa
+wwwwwwwwwwwwwwwtt                            p                                  tttttaaaa          a        a              a     a     aaaaaaa aaaaaaaaaaa
 wwwwwwwwwwwwwwwtttt                          u                            www   tttttaa     aa     aaaa     a       a      a     a     a  aaaaaaaa   aaaaa
 wwwwwwwwwwwwwwwttttttt                                                    wtt Tttttttaaa    aa     a        a       a      aaaaaaaaa   aaaaaaaaaaaaaaaaaaa
 wwwwwwwwwwwwwwwwttttttttttttttttttttttttttttttttttttttttttttttttttttttttttwbtttttttttaaaa          a        a       a                  aaaaaaaaaaaaaaaaaaa
