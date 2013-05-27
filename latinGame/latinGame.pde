@@ -4,7 +4,26 @@ interface Movable {
   
 }
 
-class DialogueBox{
+class Button {
+  
+  int x, y;
+  PImage img;
+  
+  public Button(int x, int y, String URL) {
+    img = loadImage(URL);
+  }
+  
+  public void render() {
+    image(img, x, y);
+  }
+  
+  public boolean isPressed() {
+    return mousePressed && x < mouseX &&  mouseX < x + img.width && y < mouseY && mouseY < y + img.height;
+  }
+  
+}
+
+class DialogueBox {
   public String speaker,dialogue;
   public PImage portrait;
   private PImage gradientBackground;
@@ -19,13 +38,45 @@ class DialogueBox{
     gradientBackground.resize(600,100);
 }
   
-  public void drawDialogue(){
+  public void drawDialogue() {
     image(gradientBackground,width/2,height/16+5);
     fill(0);
     text(speaker + ": \n" + dialogue,width/16*4+20,height/24);
     image(portrait,width/8,height/12);
 
   }
+  
+  public void end() {
+    
+  }
+  
+}
+
+class EndGameDialogueBox extends DialogueBox {
+  
+  public EndGameDialogueBox(String speaking, String speakerPicURL, String wordsSaid){
+    super(speaking, speakerPicURL, wordsSaid);
+  }
+  
+  public void end() {
+    inGame = false;
+  }
+  
+}
+
+class ShowImageDialogueBox extends DialogueBox {
+  
+  PImage img;
+  
+  public ShowImageDialogueBox(String speaking, String speakerPicURL, String wordsSaid, String URL){
+    super(speaking, speakerPicURL, wordsSaid);
+    img = loadImage(URL);
+  }
+  
+  public void end() {
+    image(img, width / 2, height / 2);
+  }
+  
 }
 
 class Thing {
@@ -212,7 +263,7 @@ class Human extends Actor {
   }
   
   public void kill() {
-    dialogues.add(new DialogueBox("Neptune","trident.png","De mortuis nil nisi bonum."));
+    dialogues.add(new EndGameDialogueBox("Neptune","trident.png","De mortuis nil nisi bonum."));
     super.kill();
   }
   
@@ -337,6 +388,8 @@ boolean isFree(int x, int y) {
 
 boolean inGame;
 
+Button joinGame;
+
 Human thePlayer;
 
 ArrayList<Thing> environment;
@@ -358,18 +411,26 @@ void setup() {
   
   size(500,400);
   
-  inGame = true;
-  setupGame();
+  joinGame = new Button(width / 2, height / 2, "grass.png");
+  
+  setupMenu();
   
 }
 
 void draw() {
+  
+  imageMode(CENTER);
+  
   if (inGame) {
     drawGame();
+  } else {
+    drawMenu();
   }
 }
 
 void setupGame() {
+  
+  inGame = true;
   
   symbols.put('a',"/rock.png");
   symbols.put('w',"/water.png");
@@ -413,7 +474,6 @@ void setupGame() {
 }
 
 void drawGame() {
-  imageMode(CENTER);
   
   if (thePlayer.isDead) {
     background(0,0,0);
@@ -473,7 +533,9 @@ void drawGame() {
       thePlayer.move(PI);
       for (int i = 28; i < 31; i++) {
         if(((Trigger) grid[i][13]).check()) {
-          inGame = false;
+          dialogues.add(new DialogueBox("Fury","harpy.png","Alas, he survived!"));
+          dialogues.add(new ShowImageDialogueBox("Fury","harpy.png","The diver was named after him!", "painting.jpg"));
+          dialogues.add(new EndGameDialogueBox("Fury","harpy.png","Cave!"));
         }
       }
     }
@@ -491,11 +553,25 @@ void drawGame() {
   
 }
 
+void setupMenu() {
+  inGame = false;
+}
+
+void drawMenu() {
+  background(0);
+  //text("Samnite Survival",width/16*4+20,height/24);
+  new DialogueBox("SnorriDevTeam presents","harpy.png","Samnite Survival").drawDialogue();
+  joinGame.render();
+  if (joinGame.isPressed()) setupGame();
+}
+
 Trident t;
 
 void mousePressed() {
-  t = thePlayer.attack(new Thing(mouseX + thePlayer.xPos() - width / 2, mouseY + thePlayer.yPos() - height / 2));
-  if (t != null) weapons.add(t);
+  if (inGame) {
+    t = thePlayer.attack(new Thing(mouseX + thePlayer.xPos() - width / 2, mouseY + thePlayer.yPos() - height / 2));
+    if (t != null) weapons.add(t);
+  }
 }
 
 void keyPressed() {
@@ -530,5 +606,8 @@ void keyReleased() {
       case RIGHT: D.release(); break;
     }
   }
-  if(key==' ' && dialogues.size() > 0) dialogues.remove(0);
+  if(key==' ' && dialogues.size() > 0) {
+    dialogues.get(0).end();
+    dialogues.remove(0);
+  }
 }
