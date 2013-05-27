@@ -365,7 +365,10 @@ void loadGrid(String URL) {
             weapons.add(new Trident("trident.png", 0, 0, 0, 0));
             weapons.get(weapons.size() - 1).goToCoords(x,y);
           }
-          else {
+          else if (name == "H") {
+            environment.add(new Thing("house.png", 0, 0));
+            environment(1).goToCoords(x, y);
+          } else {
             if (name.charAt(0) == 'T')
               grid[y][x] = new Trigger(name.substring(1), x, y);
             else
@@ -447,6 +450,7 @@ void setupGame() {
   symbols.put('^',".road/roadedgeup.png");
   symbols.put('E',"Tgrass.png");
   symbols.put('T',"3");
+  symbols.put('H',"H");
   loadGrid("/grid.txt");
     
   thePlayer = new Human("playerSprites");
@@ -463,11 +467,9 @@ void setupGame() {
   
   environment = new ArrayList<Thing>();
   environment.add(new Thing("temple.png", 0, 0));
-  environment.get(0).goToCoords(35, 6);
-  //environment.add(new Trigger("grass.png", 0, 0));
-  //environment.get(1).goToCoords(15,29);    
+  environment.get(0).goToCoords(35, 6);    
   
-  draw();
+  drawGame();
   
   dialogues.add(new DialogueBox("Fury","harpy.png","Cave!"));
   dialogues.add(new DialogueBox("Neptune","poseidon.png","Sum deus maris"));
