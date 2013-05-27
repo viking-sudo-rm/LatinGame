@@ -34,6 +34,8 @@ class Button {
   
   public Button(int x, int y, String URL) {
     img = loadImage(URL);
+    this.x = x;
+    this.y = y;
   }
   
   public void render() {
@@ -428,6 +430,7 @@ boolean isFree(int x, int y) {
 
 boolean inGame;
 Button joinGame;
+PImage menuBackground;
 
 Human thePlayer;
 
@@ -450,7 +453,8 @@ void setup() {
   
   size(500,400);
   
-  joinGame = new Button(width / 2, height / 2, "grass.png");
+  menuBackground = loadImage("menu.png");
+  joinGame = new Button(250, 200, "button.png");
   
   setupMenu();
   
@@ -599,8 +603,7 @@ void setupMenu() {
 }
 
 void drawMenu() {
-  background(0);
-  new DialogueBox("SnorriDevTeam presents","harpy.png","Samnite Survival").drawDialogue();
+  image(menuBackground, width / 2, height / 2);
   joinGame.render();
   if (joinGame.isPressed()) setupGame();
 }
