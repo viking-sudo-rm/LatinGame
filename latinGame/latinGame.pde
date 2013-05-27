@@ -381,6 +381,9 @@ void setupGame() {
   symbols.put('p',".road/road1.png");
   symbols.put('r',".road/roadside.png");
   symbols.put('e',".road/roadedgeside.png");
+  symbols.put('u',".road/roadedgedown.png");
+  symbols.put('c',".road/roadcorner.png");
+  symbols.put('^',".road/roadedgeup.png");
   symbols.put('E',"Tgrass.png");
   symbols.put('T',"3");
   loadGrid("/grid.txt");
