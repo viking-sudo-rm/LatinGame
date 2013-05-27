@@ -380,20 +380,16 @@ void setupGame() {
   symbols.put('x',"/blank.png");
   symbols.put('p',".road/road1.png");
   symbols.put('r',".road/roadside.png");
+  symbols.put('e',".road/roadedgeside.png");
   symbols.put('E',"Tgrass.png");
   symbols.put('T',"3");
   loadGrid("/grid.txt");
     
   thePlayer = new Human("playerSprites");
-  thePlayer.goToCoords(34,9);
+  thePlayer.goToCoords(34,9 );
   thePlayer.velocity *= 2;
    
   units = new ArrayList<Actor>();
-  for (int i = 0; i < 3; i++) {
-    units.add(new Actor("furySprites",0,0));
-    units.get(i).goToCoords(30 + 2 * i, 2);
-    units.get(i).canFly = true;
-  }
   
   backgrounds = new ArrayList<Thing>();
   for (int x = -1; x < 30; x++) {
@@ -458,6 +454,12 @@ void drawGame() {
       }
     }
     
+    for (int i = units.size(); i < 5; i++) {
+      units.add(new Actor("furySprites",0,0));
+      units.get(i).goToCoords(30 + 5 * i, 2);
+      units.get(i).canFly = true;
+    }
+    
     for (int i = 28; i < 31; i++) {
       if(((Trigger) grid[i][15]).check()) {
         thePlayer.win();
@@ -468,7 +470,7 @@ void drawGame() {
       thePlayer.move(PI);
       for (int i = 28; i < 31; i++) {
         if(((Trigger) grid[i][13]).check()) {
-          println("game ova");
+          inGame = false;
         }
       }
     }
