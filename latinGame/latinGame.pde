@@ -43,7 +43,7 @@ class Button {
   }
   
   public boolean isPressed() {
-    return mousePressed && x < mouseX &&  mouseX < x + img.width && y < mouseY && mouseY < y + img.height;
+    return  mousePressed && x - img.width / 2 < mouseX &&  mouseX < x + img.width / 2 && y - img.width / 2 < mouseY && mouseY < y + img.height / 2;
   }
   
 }
@@ -54,9 +54,9 @@ class DialogueBox {
   private PImage gradientBackground;
   private PFont font;
   
-  public DialogueBox(String speaking, String speakerPicURL, String wordsSaid){
+  public DialogueBox(String speaking, String speakerPicURL, int index){
     speaker = speaking;
-    dialogue = wordsSaid;
+    dialogue = english[index];
     portrait = loadImage(speakerPicURL);
     portrait.resize(0, 50);
     gradientBackground = loadImage("Gradient2.png");
@@ -79,8 +79,8 @@ class DialogueBox {
 
 class EndGameDialogueBox extends DialogueBox {
   
-  public EndGameDialogueBox(String speaking, String speakerPicURL, String wordsSaid){
-    super(speaking, speakerPicURL, wordsSaid);
+  public EndGameDialogueBox(String speaking, String speakerPicURL, int index){
+    super(speaking, speakerPicURL, index);
   }
   
   public void end() {
@@ -93,8 +93,8 @@ class ShowImageDialogueBox extends DialogueBox {
   
   PImage img;
   
-  public ShowImageDialogueBox(String speaking, String speakerPicURL, String wordsSaid, String URL){
-    super(speaking, speakerPicURL, wordsSaid);
+  public ShowImageDialogueBox(String speaking, String speakerPicURL, int index, String URL){
+    super(speaking, speakerPicURL, index);
     img = loadImage(URL);
   }
   
@@ -216,10 +216,6 @@ class Actor extends Thing implements Movable {
       this.x += velocity * cos(direction);
       this.y += velocity * sin(direction);
     }
-    //else if (abs(theta) < 450) {
-      //int sign = (theta % (Math.PI / 2) < Math.PI / 4) ? -1 : 1;
-      //move(theta + sign * (float) Math.PI / 2);
-    //}
   }
   
   public void moveD(int theta) {
@@ -290,7 +286,7 @@ class Human extends Actor {
   }
   
   public void kill() {
-    dialogues.add(new EndGameDialogueBox("Neptune","poseidon.png","De mortuis nil nisi bonum."));
+    dialogues.add(new EndGameDialogueBox("Neptune","poseidon.png",28));
     super.kill();
   }
   
@@ -343,10 +339,11 @@ class Trident extends Thing {
     }
     else if (thePlayer.overlaps(x + (numUpdates * VELOCITY + img.width / 2) * cos(theta), y + (numUpdates * VELOCITY) * sin(theta)) || thePlayer.overlaps(x + (numUpdates * VELOCITY - img.width / 2) * cos(theta), y + (numUpdates * VELOCITY) * sin(theta))) {
       if (! pickedUp) {
-        if (thePlayer.stats.tridentsPickedUp == 0)
-          dialogues.add(new DialogueBox("Neptune","poseidon.png","Use this weapon to kill harpies and make sure to retrie"));
-        else
-          dialogues.add(new DialogueBox("Neptune","poseidon.png","Excellent, you've found another trident!"));
+        if (thePlayer.stats.tridentsPickedUp == 0) {
+          dialogues.add(new DialogueBox("Neptune", "poseidon.png", 15));
+          dialogues.add(new DialogueBox("Neptune", "poseidon.png", 16));
+        } else
+          dialogues.add(new DialogueBox("Neptune","poseidon.png",17));
         thePlayer.stats.pickupTrident();
       }
       thePlayer.giveTrident();
@@ -392,8 +389,6 @@ class Key {
 
 void loadGrid(String URL) {
     String[] lines = loadStrings(URL);
-    println(lines.length);
-    println(lines[0].length());
     grid = new Tile[lines.length][lines[0].length()];
     String name;
     for (int y = 0; y < lines.length; y++) {
@@ -432,6 +427,8 @@ boolean inGame;
 Button joinGame;
 PImage menuBackground;
 
+String[] english;
+
 Human thePlayer;
 
 ArrayList<Thing> environment;
@@ -453,6 +450,8 @@ void setup() {
   
   size(500,400);
   
+  english = loadStrings("scripts/english.txt");
+  
   menuBackground = loadImage("menu.png");
   joinGame = new Button(250, 200, "button.png");
   
@@ -472,7 +471,7 @@ void draw() {
 }
 
 void setupGame() {
-  
+    
   inGame = true;
   
   symbols.put('a',"/rock.png");
@@ -514,8 +513,10 @@ void setupGame() {
   
   draw();
   
-  dialogues.add(new DialogueBox("Fury","harpy.png","Cave!"));
-  dialogues.add(new DialogueBox("Neptune","poseidon.png","Sum deus maris"));
+  for (int i = 0; i < 11; i++) {
+    dialogues.add(new DialogueBox("Neptune","poseidon.png",i));
+  }
+  
 }
 
 void drawGame() {
@@ -571,6 +572,7 @@ void drawGame() {
     for (int i = 28; i < 31; i++) {
       if(((Trigger) grid[i][15]).check()) {
         thePlayer.win();
+        dialogues.add(new DialogueBox("Narrator","blank.png",19));
       }
     }
     
@@ -578,9 +580,10 @@ void drawGame() {
       thePlayer.move(PI);
       for (int i = 28; i < 31; i++) {
         if(((Trigger) grid[i][13]).check()) {
-          dialogues.add(new DialogueBox("Neptune","poseidon.png","Alas, you survived!"));
-          dialogues.add(new ShowImageDialogueBox("Fury","harpy.png","The diver was named after him!", "painting.jpg"));
-          dialogues.add(new EndGameDialogueBox("Fury","harpy.png","Cave!"));
+          for (int j = 19; j < 25; j++)
+            dialogues.add(new DialogueBox("Narrator","blank.png",j));
+          dialogues.add(new ShowImageDialogueBox("Narrator","blank.png",25, "painting.jpg"));
+          dialogues.add(new EndGameDialogueBox("Narrator","blank.png",26));
         }
       }
     }
