@@ -335,6 +335,8 @@ boolean isFree(int x, int y) {
   return grid[y][x] == null || grid[y][x].passable;
 }
 
+boolean inGame;
+
 Human thePlayer;
 
 ArrayList<Thing> environment;
@@ -353,8 +355,21 @@ Key S = new Key(1);
 Key D = new Key(1);
 
 void setup() {
-
+  
   size(500,400);
+  
+  inGame = true;
+  setupGame();
+  
+}
+
+void draw() {
+  if (inGame) {
+    drawGame();
+  }
+}
+
+void setupGame() {
   
   symbols.put('a',"/rock.png");
   symbols.put('w',"/water.png");
@@ -399,7 +414,7 @@ void setup() {
   dialogues.add(new DialogueBox("Neptune","trident.png","Sum deus maris"));
 }
 
-void draw() {
+void drawGame() {
   imageMode(CENTER);
   
   if (thePlayer.isDead) {
@@ -446,13 +461,18 @@ void draw() {
     
     for (int i = 28; i < 31; i++) {
       if(((Trigger) grid[i][15]).check()) {
-        println("homie you won!");
         thePlayer.win();
       }
     }
     
-    if (thePlayer.hasWon)
+    if (thePlayer.hasWon) {
       thePlayer.move(PI);
+      for (int i = 28; i < 31; i++) {
+        if(((Trigger) grid[i][13]).check()) {
+          println("game ova");
+        }
+      }
+    }
     else {
       if (A.getValue() + D.getValue() == 0) {
         if (W.getValue() + S.getValue() != 0)
