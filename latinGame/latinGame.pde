@@ -292,7 +292,7 @@ class Human extends Actor {
   }
   
   public void kill() {
-    dialogues.add(new EndGameDialogueBox("Neptune","poseidon.png",28));
+    dialogues.add(new EndGameDialogueBox("Neptune","poseidon.png",29));
     super.kill();
   }
   
@@ -503,7 +503,7 @@ void setupGame() {
     
   thePlayer = new Human("playerSprites");
   thePlayer.goToCoords(34,9 );
-  thePlayer.velocity *= 2;
+  thePlayer.velocity *= 1.5;
   
   weapons = new ArrayList<Trident>();  
   units = new ArrayList<Actor>();
@@ -574,7 +574,7 @@ void drawGame() {
       }
     }
     
-    for (int i = units.size(); i < 5; i++) {
+    for (int i = units.size(); i < 10; i++) {
       units.add(new Actor("furySprites",0,0));
       units.get(i).goToCoords(30 + 5 * i, 2);
       units.get(i).canFly = true;
