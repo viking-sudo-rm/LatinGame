@@ -497,8 +497,7 @@ void setupGame() {
   symbols.put('c',".road/roadcorner.png");
   symbols.put('^',".road/roadedgeup.png");
   symbols.put('&',".road/roadinter.png");
-  symbols.put('f',".finalstairs.png");
-  symbols.put('E',"Tgrass.png");
+  symbols.put('E',"Tblank.png");
   symbols.put('T',"3");
   symbols.put('H',"H");
     
@@ -518,6 +517,8 @@ void setupGame() {
   environment = new ArrayList<Thing>();
   environment.add(new Thing("temple.png", 0, 0));
   environment.get(0).goToCoords(35, 6);
+  environment.add(new Thing("finalstairs.png", 0, 0));
+  environment.get(1).goToCoords(15, 29);
 
   loadGrid("/grid.txt");  
   
