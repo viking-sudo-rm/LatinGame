@@ -497,6 +497,7 @@ void setupGame() {
   symbols.put('c',".road/roadcorner.png");
   symbols.put('^',".road/roadedgeup.png");
   symbols.put('&',".road/roadinter.png");
+  symbols.put('f',".finalstairs.png");
   symbols.put('E',"Tgrass.png");
   symbols.put('T',"3");
   symbols.put('H',"H");
