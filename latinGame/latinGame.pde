@@ -29,17 +29,23 @@ class Stats {
 
 class Button {
   
-  int x, y;
-  PImage img;
-  
-  public Button(int x, int y, String URL) {
+  private int x, y;
+  private PImage img;
+  private PImage pressedImg;
+    
+  public Button(int x, int y, String URL, String pressedURL) {
     img = loadImage(URL);
+    pressedImg = loadImage(pressedURL);
     this.x = x;
     this.y = y;
   }
   
   public void render() {
     image(img, x, y);
+  }
+  
+  public void renderPressed() {
+    image(pressedImg, x, y);
   }
   
   public boolean isPressed() {
@@ -425,6 +431,7 @@ boolean isFree(int x, int y) {
 
 boolean inGame;
 Button joinGame;
+boolean shouldEnterGame;
 PImage menuBackground;
 
 String[] english;
@@ -453,7 +460,8 @@ void setup() {
   english = loadStrings("scripts/english.txt");
   
   menuBackground = loadImage("menu.png");
-  joinGame = new Button(250, 200, "button.png");
+  joinGame = new Button(250, 200, "button.png", "loadingbutton.png");
+  shouldEnterGame = false;
   
   setupMenu();
   
@@ -473,6 +481,7 @@ void draw() {
 void setupGame() {
     
   inGame = true;
+  shouldEnterGame = false;
   
   symbols.put('a',"/rock.png");
   symbols.put('w',"/water.png");
@@ -606,9 +615,15 @@ void setupMenu() {
 }
 
 void drawMenu() {
-  image(menuBackground, width / 2, height / 2);
-  joinGame.render();
-  if (joinGame.isPressed()) setupGame();
+  if (shouldEnterGame) setupGame();
+  else {
+    image(menuBackground, width / 2, height / 2);
+    joinGame.render();
+    if (joinGame.isPressed()) {
+      joinGame.renderPressed();
+      shouldEnterGame = true;
+    }
+  }
 }
 
 Trident t;
