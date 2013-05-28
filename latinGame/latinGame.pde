@@ -303,12 +303,22 @@ class Human extends Actor {
   public void giveTrident() {
     ammo++;
   }
-  
+  public int getAmmo(){
+    return ammo;
+  }
   public Trident attack(Thing target) {    
     if (ammo < 1)
       return null;      
     ammo--;
     return new Trident("trident.png", x, y, (float) getAngleBetween(target), distanceTo(target), true);
+  }
+    
+  public void drawAmmoCounter(){
+    noFill();
+    rect(width/12*10,height/12*10,width/12*2,height/12*1);
+    for(int i = ammo-1; i >= 0; i--){
+      image(trident,width/12*10.5+1+i*10,height/12*10.5);
+    }
   }
   
 }
@@ -432,7 +442,7 @@ boolean isFree(int x, int y) {
 boolean inGame;
 Button joinGame;
 boolean shouldEnterGame;
-PImage menuBackground;
+PImage menuBackground, trident;
 
 String[] english;
 
@@ -456,7 +466,7 @@ Key D = new Key(1);
 void setup() {
   
   size(500,400);
-  
+  trident = loadImage("trident.png");
   english = loadStrings("scripts/english.txt");
   
   menuBackground = loadImage("menu.png");
@@ -599,6 +609,7 @@ void drawGame() {
       }
     }
     else {
+      thePlayer.drawAmmoCounter();
       if (A.getValue() + D.getValue() == 0) {
         if (W.getValue() + S.getValue() != 0)
           thePlayer.moveD((Integer) ((W.getValue() + S.getValue())/abs(W.getValue() + S.getValue()) * 90));
@@ -609,6 +620,7 @@ void drawGame() {
   }
   
   if(dialogues.size() > 0) dialogues.get(0).drawDialogue();
+
   
 }
 
