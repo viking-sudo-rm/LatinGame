@@ -1,9 +1,3 @@
-interface Movable {
-  
-  public void move(float theta);
-  
-}
-
 class Stats {
   
   private int tridentsPickedUp;
@@ -58,7 +52,6 @@ class DialogueBox {
   public String speaker,dialogue;
   public PImage portrait;
   private PImage gradientBackground;
-  private PFont font;
   
   public DialogueBox(String speaking, String speakerPicURL, int index){
     speaker = speaking;
@@ -188,7 +181,7 @@ class Trigger extends Tile {
   
 }
 
-class Actor extends Thing implements Movable {
+class Actor extends Thing {
   
   private static final int MOVES_PER_STEP = 5;
   private static final int HEIGHT = 36;
@@ -443,6 +436,7 @@ boolean inGame;
 Button joinGame;
 boolean shouldEnterGame;
 PImage menuBackground, trident;
+PFont font;
 
 String[] english;
 
@@ -465,9 +459,10 @@ Key D = new Key(1);
 
 void setup() {
   
-  size(500,400);
+  size(500, 400);
   trident = loadImage("trident.png");
   english = loadStrings("scripts/english.txt");
+  font = loadFont("AgencyFB-Bold-48.vlw");
   
   menuBackground = loadImage("menu.png");
   joinGame = new Button(250, 200, "button.png", "loadingbutton.png");
@@ -480,6 +475,7 @@ void setup() {
 void draw() {
   
   imageMode(CENTER);
+  textFont(font, 16);
   
   if (inGame) {
     drawGame();
@@ -601,10 +597,10 @@ void drawGame() {
       thePlayer.move(PI);
       for (int i = 28; i < 31; i++) {
         if(((Trigger) grid[i][13]).check()) {
-          for (int j = 19; j < 25; j++)
+          for (int j = 19; j < 26; j++)
             dialogues.add(new DialogueBox("Narrator","blank.png",j));
-          dialogues.add(new ShowImageDialogueBox("Narrator","blank.png",25, "painting.jpg"));
-          dialogues.add(new EndGameDialogueBox("Narrator","blank.png",26));
+          dialogues.add(new ShowImageDialogueBox("Narrator","blank.png",26, "painting.jpg"));
+          dialogues.add(new EndGameDialogueBox("Narrator","blank.png",27));
         }
       }
     }
